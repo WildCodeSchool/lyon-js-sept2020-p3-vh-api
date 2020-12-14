@@ -1,6 +1,6 @@
 const {findAll, findOne, createUser, deleteUser, updateUser} = require ('../models/users.js')
 
-module.exports.handleAllUsers = async (res) => {
+module.exports.handleAllUsers = async (req, res) => {
     const rawData = await findAll();
     res.json(rawData)
 }
@@ -10,9 +10,9 @@ module.exports.handleAnUser = async (req, res) => {
     res.json(rawData)
 }
 
-module.exports.handleOneUserCreation = async (res) => {
-    const rawData = await createUser();
-    res.json(rawData)
+module.exports.handleOneUserCreation = async (req, res) => {
+    const createdUser = await createUser(req.body);
+    return res.status(201).json(createdUser)
 }
 
 module.exports.handleOneUserDeletion = async (req, res) => {
