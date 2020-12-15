@@ -6,7 +6,7 @@ module.exports.handleAllUsers = async (req, res) => {
 }
 
 module.exports.handleAnUser = async (req, res) => {
-    const rawData = await findOne(req.params.id);
+    const rawData = await findOne(req);
     res.json(rawData)
 }
 
