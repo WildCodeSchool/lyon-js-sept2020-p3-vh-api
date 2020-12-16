@@ -1,6 +1,5 @@
-// const thingsRoutes = require('./things');
+const sponsorsRoutes = require('./sponsors');
 
-// eslint-disable-next-line
 module.exports = (app) => {
-  // app.use('/things', thingsRoutes);
+  app.use('/sponsors', sponsorsRoutes);
 };
