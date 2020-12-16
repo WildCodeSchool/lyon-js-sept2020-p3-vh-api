@@ -19,7 +19,7 @@ const emailAlreadyExists = async (email) => {
     return false;
 }
 
-// find one suer by his id
+// find one user by his id
 
 const findOne = async (id, failIfNotFound = true) => {
   const userId = id
