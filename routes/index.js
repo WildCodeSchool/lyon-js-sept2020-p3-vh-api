@@ -1,6 +1,6 @@
-// const thingsRoutes = require('./things');
+const carrouselRoute = require('./carrousel');
 
 // eslint-disable-next-line
 module.exports = (app) => {
-  // app.use('/things', thingsRoutes);
+  app.use('/', carrouselRoute);
 };
