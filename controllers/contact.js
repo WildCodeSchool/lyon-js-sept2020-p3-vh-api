@@ -1,4 +1,4 @@
-const { getAllMessages,getOneMessage, postOneMessage  } = require('../models/contact.js');
+const { getAllMessages,getOneMessage, postOneMessage, deleteOneMessage  } = require('../models/contact.js');
 
 
 module.exports.handleGetAllMessages = async (req, res) => {
@@ -15,3 +15,9 @@ module.exports.handleOneMessagePost = async (req, res) => {
   const rawData = await postOneMessage(req);
   res.json(rawData);
 };
+
+module.exports.handleDeleteOneMessage = async (req, res) => {
+  const rawData = await deleteOneMessage(req);
+  res.json(rawData);
+};
+

@@ -27,5 +27,12 @@ const postOneMessage = async (req) => {
     );
 };
 
+const deleteOneMessage = async (req) => {
+  const idMessage = req.params.id
+    return db.query('DELETE FROM messages WHERE id = ?'
+    ,[idMessage]
+    )
+  };
 
-module.exports = {getAllMessages,getOneMessage, postOneMessage };
+
+module.exports = {getAllMessages,getOneMessage, postOneMessage, deleteOneMessage };
