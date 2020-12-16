@@ -1,0 +1,9 @@
+CREATE TABLE `wine` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `vigneron` VARCHAR(255) NOT NULL,
+  `cepage` VARCHAR(255) NULL,
+  `arome` VARCHAR(255) NULL,
+  `price` DECIMAL(13, 2) NULL,
+  PRIMARY KEY (`id`)
+);
