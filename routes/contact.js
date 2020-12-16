@@ -1,7 +1,9 @@
 const asyncHandler = require('express-async-handler');
 const contactRouter = require('express').Router();
-const { handleOneContactPost } = require('../controllers/contact');
+const {handleGetAllMessages,handleGetOneMessage, handleOneMessagePost } = require('../controllers/contact');
 
-contactRouter.post('/', asyncHandler(handleOneContactPost)); 
+contactRouter.get('/', asyncHandler(handleGetAllMessages)); 
+contactRouter.get('/:id', asyncHandler(handleGetOneMessage)); 
+contactRouter.post('/', asyncHandler(handleOneMessagePost)); 
 
 module.exports = contactRouter;

@@ -1,7 +1,18 @@
 const db = require('../db.js');
 
+const getAllMessages = async () => {
+  return db.query('SELECT * FROM messages')
+};
 
-const postOne = async (req) => {
+const getOneMessage = async (req) => {
+const idMessage = req.params.id
+  return db.query('SELECT * FROM messages WHERE id = ?'
+  ,[idMessage]
+  )
+};
+
+
+const postOneMessage = async (req) => {
     const { firstname,lastname, message, email } = req.body;
     return db.query('INSERT INTO messages(firstname,lastname,message,email) VALUES (?,?,?,?) ',
     [firstname,lastname,message,email],
@@ -17,4 +28,4 @@ const postOne = async (req) => {
 };
 
 
-module.exports = { postOne };
+module.exports = {getAllMessages,getOneMessage, postOneMessage };
