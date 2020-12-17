@@ -1,6 +1,7 @@
 const carrouselRoute = require('./carrousel');
+const contactRouter = require('./contact');
 
-// eslint-disable-next-line
 module.exports = (app) => {
   app.use('/', carrouselRoute);
+  app.use('/contact', contactRouter);
 };
