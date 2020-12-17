@@ -1,6 +1,7 @@
 const wineRoute = require('./wine');
+const contactRouter = require('./contact');
 
-// eslint-disable-next-line
 module.exports = (app) => {
   app.use('/products', wineRoute);
+  app.use('/contact', contactRouter);
 };
