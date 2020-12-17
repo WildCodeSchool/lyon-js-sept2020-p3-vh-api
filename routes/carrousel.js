@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler');
 const carrouselRouter = require('express').Router();
-const protectByApiKey = require('../middlewares/protectByApiKey');
 
 const {
   handleCarrouselPost,
@@ -8,12 +7,8 @@ const {
   handleCarrouselGet,
 } = require('../controllers/carrousel');
 
-carrouselRouter.get('/', protectByApiKey, asyncHandler(handleCarrouselGet));
-carrouselRouter.post('/', protectByApiKey, asyncHandler(handleCarrouselPost));
-carrouselRouter.delete(
-  '/:id',
-  protectByApiKey,
-  asyncHandler(handleCarrouselDelete)
-);
+carrouselRouter.get('/', asyncHandler(handleCarrouselGet));
+carrouselRouter.post('/', asyncHandler(handleCarrouselPost));
+carrouselRouter.delete('/:id', asyncHandler(handleCarrouselDelete));
 
 module.exports = carrouselRouter;
