@@ -6,3 +6,4 @@ const definedAttributesToSqlSet = (attributes) =>
     .join(', ');
 
 module.exports = definedAttributesToSqlSet;
+

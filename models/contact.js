@@ -33,6 +33,4 @@ const deleteOneMessage = async (req) => {
   };
 
 
-
-
 module.exports = {getAllMessages,getOneMessage, postOneMessage, deleteOneMessage };
