@@ -32,6 +32,8 @@ const findOne = async (id, failIfNotFound = true) => {
   return null;
 };
 
+// pattern: /^[A-Za-z]+$/i,
+
 // validate datas on update or create
 
 const validate = async (attributes, options = { udpatedRessourceId: null }) => {
@@ -39,28 +41,34 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
   const forUpdate = !!udpatedRessourceId;
   const schema = Joi.object().keys({
     firstname: forUpdate
-      ? Joi.string().min(1).max(70)
-      : Joi.string().min(1).max(70).required(),
-      lastname: forUpdate
-      ? Joi.string().min(1).max(70)
-      : Joi.string().min(1).max(70).required(),
-    email: forUpdate ? Joi.string().email() : Joi.string().email().required(),
+      ? Joi.string().min(1).max(70).regex(/^[a-z ,.'-]+$/i)
+      : Joi.string().min(1).max(70).required().regex(/^[a-z ,.'-]+$/i).messages({ 'string.min':'Prénom manquant','string.max':'Le prénom ne doit pas excéder 30 caractères', 'string.pattern.base' :'Votre prénom contient des caractères non autorisés' }),
+    lastname: forUpdate
+      ? Joi.string().min(1).max(70).regex(/^[a-z ,.'-]+$/i)
+      : Joi.string().min(1).max(70).required().regex(/^[a-z ,.'-]+$/i).messages({ 'string.min':'Nom manquant','string.max':'Le nom ne doit pas excéder 70 caractères', 'string.pattern.base' :'Votre nom contient des caractères non autorisés' }),
+    email: forUpdate ? Joi.string().email() : Joi.string().email().required().messages({ 'required':'Email manquant', 'string.email':"Votre email n'est pas valide" }),
     password: forUpdate
-      ? Joi.string().min(8).max(30)
-      : Joi.string().min(8).max(30).required(),
+      ? Joi.string().min(8).max(25)
+      : Joi.string().min(8).max(25).required().messages({ 'string.min':'Le mot de passe doit comprendre au moins 8 caractères','string.max':'Le mot de passe doit comprendre moins de 25 caractères' }),
+    phone: forUpdate
+      ? Joi.string().max(30).messages({ 'string.max':'Le numéro de téléphone ne doit pas dépasser 30 caractères'})
+      : Joi.string().max(30).allow('').messages({'string.max':'Le numéro de téléphone ne doit pas dépasser 30 caractères' }),
     password_confirmation: Joi.when('password', {
       is: Joi.string().min(8).max(30).required(),
       then: Joi.any()
         .equal(Joi.ref('password'))
         .required()
-        .messages({ 'any.only': 'password_confirmation does not match' }),
+        .messages({ 'any.only': 'Les mots de passe ne correspondent pas' }),
     }),
   });
 
   const { error } = schema.validate(attributes, {
     abortEarly: false,
   });
-  if (error) throw new ValidationError(error.details);
+  if (error) throw new ValidationError([
+    { message: error.details.map(err => err.message), path: ['joi'], type: 'unique' },
+  ]);
+  
 
   if (attributes.email) {
     let shouldThrow = false;
@@ -74,7 +82,7 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
     }
     if (shouldThrow) {
       throw new ValidationError([
-        { message: 'email already taken', path: ['email'], type: 'unique' },
+        { message: ['Cet email existe déjà'], path: ['email'], type: 'unique' },
       ]);
     }
   }
@@ -85,9 +93,9 @@ const hashPassword = async (password) => argon2.hash(password);
 
 const createUser = async (datas) => {
   await validate(datas);
-  const { firstname, lastname, email, password } = datas;
+  const { firstname, lastname, email, password, phone } = datas;
   const encrypted_password = await hashPassword(password);
-  return db.query('INSERT INTO user(firstname, lastname, email, encrypted_password) VALUES(?, ?, ?, ?)',  [firstname, lastname, email, encrypted_password])
+  return db.query('INSERT INTO user(firstname, lastname, email, phone_number, encrypted_password) VALUES(?, ?, ?, ?, ?)',  [firstname, lastname, email, phone, encrypted_password])
   .then((res) =>(res.insertId))
 }
 
