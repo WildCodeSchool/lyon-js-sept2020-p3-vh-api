@@ -18,14 +18,58 @@ module.exports.handleWineGetOne = async (req, res) => {
 };
 
 module.exports.handleWinePost = async (req, res) => {
-  const { name, vigneron, cepage, arome, price } = req.body;
-  const data = await postOneWine({ name, vigneron, cepage, arome, price });
+  const {
+    name,
+    vigneron,
+    cepage,
+    arome,
+    price,
+    sommelier,
+    image,
+    website,
+    specificities,
+    producteur,
+  } = req.body;
+  const data = await postOneWine({
+    name,
+    vigneron,
+    cepage,
+    arome,
+    price,
+    sommelier,
+    image,
+    website,
+    specificities,
+    producteur,
+  });
   return res.status(201).send(data);
 };
 
 module.exports.handleWinePutOne = async (req, res) => {
-  const { name, vigneron, cepage, arome, price } = req.body;
-  const attribute = { name, vigneron, cepage, arome, price };
+  const {
+    name,
+    vigneron,
+    cepage,
+    arome,
+    price,
+    sommelier,
+    image,
+    website,
+    specificities,
+    producteur,
+  } = req.body;
+  const attribute = {
+    name,
+    vigneron,
+    cepage,
+    arome,
+    price,
+    sommelier,
+    image,
+    website,
+    specificities,
+    producteur,
+  };
   const data = await putOneWine(req.params.id, attribute);
   res.send(data);
 };
