@@ -20,7 +20,6 @@ const DB_PORT = getEnv(`DB_PORT${inTestEnv ? '_TEST' : ''}`);
 const DB_USER = getEnv(`DB_USER${inTestEnv ? '_TEST' : ''}`);
 const DB_PASS = getEnv(`DB_PASS${inTestEnv ? '_TEST' : ''}`);
 const DB_NAME = getEnv(`DB_NAME${inTestEnv ? '_TEST' : ''}`);
-const API_KEY = getEnv(`API_KEY`);
 
 module.exports = {
   getEnv,
@@ -33,5 +32,4 @@ module.exports = {
   DB_USER,
   DB_NAME,
   DB_PASS,
-  API_KEY
 };
