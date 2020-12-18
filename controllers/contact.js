@@ -2,22 +2,24 @@ const { getAllMessages,getOneMessage, postOneMessage, deleteOneMessage  } = requ
 
 
 module.exports.handleGetAllMessages = async (req, res) => {
-  const rawData = await getAllMessages(req);
-  res.json(rawData);
+  const rawData = await getAllMessages();
+  res.send(rawData);
 };
 
 module.exports.handleGetOneMessage = async (req, res) => {
-  const rawData = await getOneMessage(req);
-  res.json(rawData);
+  res.send(await getOneMessage(req.params.id));
 };
 
 module.exports.handleOneMessagePost = async (req, res) => {
-  const rawData = await postOneMessage(req);
-  res.json(rawData);
+  const { firstname, lastname, email, message } = req.body;
+  const data = await postOneMessage({ firstname, lastname, email, message });
+  return res.status(201).send(data);
 };
 
 module.exports.handleDeleteOneMessage = async (req, res) => {
-  const rawData = await deleteOneMessage(req);
-  res.json(rawData);
+  await deleteOneMessage(req);
+  res.sendStatus(204);
 };
+
+
 
