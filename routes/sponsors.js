@@ -6,7 +6,7 @@ const protectByApiKey = require('../middlewares/protectByEnvAPIKey');
 const requireRequestBody = require('../middlewares/requireRequestBody.js');
 
 
-router.get('/', protectByApiKey, asyncHandler(Sponsor.handleAllSponsor));
+router.get('/', asyncHandler(Sponsor.handleAllSponsor));
 
 router.post(
   '/',
@@ -23,4 +23,4 @@ router.put(
 );
 router.delete('/:id', protectByApiKey, asyncHandler(Sponsor.handleDeleteSponsor));
 
-exports = module.exports = router;
+module.exports = router;

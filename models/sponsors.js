@@ -1,6 +1,16 @@
-const Joi = require('joi');
+// const Joi = require('joi');
 const db = require('../db.js');
-const { RecordNotFoundError, ValidationError } = require('../error-types');
+const { RecordNotFoundError, } = require('../error-types');
+
+
+const findOne = async (id, failIfNotFound = true) => {
+    const rows = await db.query(`SELECT * FROM sponsors WHERE id = ?`, [id]);
+    if (rows.length) {
+      return rows[0];
+    }
+    if (failIfNotFound) throw new RecordNotFoundError('sponsors', id);
+    return null;
+  };
 
 
 const findById = async (id, failIfNotFound = true) => {
@@ -13,7 +23,7 @@ const findById = async (id, failIfNotFound = true) => {
   }
 
 
-const findSponsor = async (req) => {
+const findSponsor = async () => {
     const rows = await db.query('SELECT * FROM sponsors');
     if (rows.lenght === 0) {
         return null
@@ -31,7 +41,7 @@ const createSponsor = async (req) => {
   const updateSponsor = async (req) => { 
     const { id, name, image } = req.body 
     const rows = await db.query('UPDATE sponsors SET WHERE id = ?', [id, name, image])
-      .then(() => findOne(id, name, image));
+      .then(() => findOne(rows));
   };
   
   const deleteSponsor = async (id, failIfNotFound = true) => {
