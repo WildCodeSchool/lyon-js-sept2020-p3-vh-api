@@ -33,7 +33,8 @@ const putOneAnimator = async (id, formData) => {
         id,
       })
       .then(() => getOneAnimator(id));
-  };
+};
+
 
 const deleteOneAnimator = async (req) => {
   const idAnimator = req.params.id
