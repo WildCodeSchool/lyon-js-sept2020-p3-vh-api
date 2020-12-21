@@ -5,6 +5,23 @@ const {ValidationError, RecordNotFoundError } = require('../error-types')
 const db = require ('../db.js')
 
 
+// find one user by his id
+const findOne = async (id, failIfNotFound = true) => {
+  const userId = id
+  const rows = await db.query('SELECT * FROM user WHERE id=?', [userId]);
+  if (rows.length) {
+    delete rows[0].encrypted_password;
+    return rows[0];
+  }
+  if (failIfNotFound) throw new RecordNotFoundError('users', userId);
+  return null;
+};
+
+//// HELPERS ////
+
+// hash password
+const hashPassword = async (password) => argon2.hash(password);
+
 // verify password between plain password and encrypted password
 const verifyPassword = async(user, plainPassword) => {
   return argon2.verify(user.encrypted_password, plainPassword)
@@ -19,23 +36,7 @@ const emailAlreadyExists = async (email) => {
     return false;
 }
 
-// find one user by his id
-
-const findOne = async (id, failIfNotFound = true) => {
-  const userId = id
-  const rows = await db.query('SELECT * FROM user WHERE id=?', [userId]);
-  if (rows.length) {
-    delete rows[0].encrypted_password;
-    return rows[0];
-  }
-  if (failIfNotFound) throw new RecordNotFoundError('users', userId);
-  return null;
-};
-
-// pattern: /^[A-Za-z]+$/i,
-
 // validate datas on update or create
-
 const validate = async (attributes, options = { udpatedRessourceId: null }) => {
   const { udpatedRessourceId } = options;
   const forUpdate = !!udpatedRessourceId;
@@ -50,7 +51,7 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
     password: forUpdate
       ? Joi.string().min(8).max(25)
       : Joi.string().min(8).max(25).required().messages({ 'string.min':'Le mot de passe doit comprendre au moins 8 caractères','string.max':'Le mot de passe doit comprendre moins de 25 caractères' }),
-    phone: forUpdate
+    phone_number: forUpdate
       ? Joi.string().max(30).messages({ 'string.max':'Le numéro de téléphone ne doit pas dépasser 30 caractères'})
       : Joi.string().max(30).allow('').messages({'string.max':'Le numéro de téléphone ne doit pas dépasser 30 caractères' }),
     password_confirmation: Joi.when('password', {
@@ -88,19 +89,9 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
   }
 };
 
-
-const hashPassword = async (password) => argon2.hash(password);
-
-const createUser = async (datas) => {
-  await validate(datas);
-  const { firstname, lastname, email, password, phone } = datas;
-  const encrypted_password = await hashPassword(password);
-  return db.query('INSERT INTO user(firstname, lastname, email, phone_number, encrypted_password) VALUES(?, ?, ?, ?, ?)',  [firstname, lastname, email, phone, encrypted_password])
-  .then((res) =>(res.insertId))
-}
+//// MODELS ////
 
 // find an user by his email
-
 const findByEmail = async (email, failIfNotFound = true) => {
   const rows = await db.query('SELECT * FROM user WHERE email = ?', [email]);
   if (rows.length) {
@@ -111,20 +102,29 @@ const findByEmail = async (email, failIfNotFound = true) => {
 }
 
 // find all users in database
-
 const findAll = async () => {
     return db.query('SELECT * FROM user');
 }
 
-
-
-// delete one user by his Id
-
-const deleteUser = async (req) => {
-    const userId = req.params.id
-    return db.query('DELETE FROM user WHERE id=?', [userId]);
+// create an user
+const createUser = async (datas) => {
+  await validate(datas);
+  const {password, password_confirmation, ...datasWithoutPasswords} = datas // remove passwords from datas object
+  const encrypted_password = await hashPassword(password);  // encrypt password with argon2
+  const datasToSave = {...datasWithoutPasswords, encrypted_password} // add encrypted password 
+  return db.query(`INSERT INTO user SET ${definedAttributesToSqlSet(datasToSave)}`, datasToSave)
+  .then((res) =>findOne(res.insertId))
 }
 
+// delete one user by his Id
+const deleteUser = async (id, failIfNotFound = true) => {
+    const res = await db.query('DELETE FROM user WHERE id=?', [id]);
+    if (res.affectedRows !== 0) {
+      return true;
+    }
+    if (failIfNotFound) throw new RecordNotFoundError('users', id);
+    return false;
+};
 // update one user by his id
 
 const updateUser = async (id, newAttributes) => {

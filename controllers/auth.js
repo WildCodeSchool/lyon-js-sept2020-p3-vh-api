@@ -5,8 +5,8 @@ module.exports.login = async (req ,res) => {
   const {email, password} = req.body;
   const user = await findByEmail(email, false);
   if(user && (await verifyPassword(user, password))) {
-    if (req.body.stayConnected) {
-      req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000; // cooki
+    if (req.body.stayConnected) { // session cookie will be valid for a week
+      req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000; 
     }
     req.session.userId = user.id;
     req.session.save(() => {
