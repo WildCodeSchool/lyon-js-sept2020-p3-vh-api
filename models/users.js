@@ -17,7 +17,7 @@ const findOne = async (id, failIfNotFound = true) => {
   return null;
 };
 
-//// HELPERS ////
+/// / HELPERS ////
 
 // hash password
 const hashPassword = async (password) => argon2.hash(password);
@@ -89,7 +89,7 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
   }
 };
 
-//// MODELS ////
+/// / MODELS ////
 
 // find an user by his email
 const findByEmail = async (email, failIfNotFound = true) => {
