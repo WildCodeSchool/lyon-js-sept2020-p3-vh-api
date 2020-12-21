@@ -1,5 +1,5 @@
 const express = require('express');
-// const cors = require('cors');
+const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const session = require('express-session');
@@ -9,7 +9,7 @@ const {
   inProdEnv,
   SERVER_PORT,
   SESSION_COOKIE_SECRET,
-  // CORS_ALLOWED_ORIGINS,
+  // CORS_ALLOWED_ORIGINS, // temporary deactivation//
   SESSION_COOKIE_NAME,
 } = require('./env');
 const handleServerInternalError = require('./middlewares/handleServerInternalError');
@@ -29,19 +29,21 @@ if (!inTestEnv && !inProdEnv) {
 
 
 // middlewares
-// const allowedOrigins = CORS_ALLOWED_ORIGINS.split(',');
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     if (origin === undefined || allowedOrigins.indexOf(origin) !== -1) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-// };
 
-// app.use(cors(corsOptions));
+// const allowedOrigins = CORS_ALLOWED_ORIGINS.split(',');  // temporary deactivation//
+const allowedOrigins = ['http://localhost:3000','http://localhost:3001']
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (origin === undefined || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -54,7 +56,6 @@ app.use(
     cookie: { sameSite: true, secure: inProdEnv },
   })
 );
-
 
 // routes
 require('./routes')(app);
