@@ -17,7 +17,7 @@ module.exports.handleOnePostAnimator = async (req, res) => {
 
 module.exports.handlePutOneAnimator = async (req, res) => {
     const { firstname, lastname, email, image, biographie, facebook_url, twitter_url, instagram_url} = req.body;
-    const attribute = await putOneAnimator({ firstname, lastname, email, image, biographie,facebook_url, twitter_url,instagram_url });
+    const attribute = { firstname, lastname, email, image, biographie,facebook_url, twitter_url,instagram_url };
     const data = await putOneAnimator(req.params.id, attribute);
     res.send(data);
 };
