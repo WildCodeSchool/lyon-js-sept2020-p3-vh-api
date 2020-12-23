@@ -42,17 +42,17 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
   const forUpdate = !!udpatedRessourceId;
   const schema = Joi.object().keys({
     firstname: forUpdate
-      ? Joi.string().min(1).max(70).regex(/^[a-z ,.'-]+$/i)
+      ? Joi.string().min(1).max(70).regex(/^[a-z ,.'-]+$/i).messages({ 'string.min':'Prénom manquant','string.max':'Le prénom ne doit pas excéder 30 caractères', 'string.pattern.base' :'Votre prénom contient des caractères non autorisés' })
       : Joi.string().min(1).max(70).required().regex(/^[a-z ,.'-]+$/i).messages({ 'string.min':'Prénom manquant','string.max':'Le prénom ne doit pas excéder 30 caractères', 'string.pattern.base' :'Votre prénom contient des caractères non autorisés' }),
     lastname: forUpdate
-      ? Joi.string().min(1).max(70).regex(/^[a-z ,.'-]+$/i)
+      ? Joi.string().min(1).max(70).regex(/^[a-z ,.'-]+$/i).messages({ 'string.min':'Nom manquant','string.max':'Le nom ne doit pas excéder 70 caractères', 'string.pattern.base' :'Votre nom contient des caractères non autorisés' })
       : Joi.string().min(1).max(70).required().regex(/^[a-z ,.'-]+$/i).messages({ 'string.min':'Nom manquant','string.max':'Le nom ne doit pas excéder 70 caractères', 'string.pattern.base' :'Votre nom contient des caractères non autorisés' }),
     email: forUpdate ? Joi.string().email() : Joi.string().email().required().messages({ 'required':'Email manquant', 'string.email':"Votre email n'est pas valide" }),
     password: forUpdate
-      ? Joi.string().min(8).max(25)
+      ? Joi.string().min(8).max(25).messages({ 'string.min':'Le mot de passe doit comprendre au moins 8 caractères','string.max':'Le mot de passe doit comprendre moins de 25 caractères' })
       : Joi.string().min(8).max(25).required().messages({ 'string.min':'Le mot de passe doit comprendre au moins 8 caractères','string.max':'Le mot de passe doit comprendre moins de 25 caractères' }),
     phone_number: forUpdate
-      ? Joi.string().max(30).messages({ 'string.max':'Le numéro de téléphone ne doit pas dépasser 30 caractères'})
+      ? Joi.string().max(30).allow('').messages({ 'string.max':'Le numéro de téléphone ne doit pas dépasser 30 caractères'})
       : Joi.string().max(30).allow('').messages({'string.max':'Le numéro de téléphone ne doit pas dépasser 30 caractères' }),
     password_confirmation: Joi.when('password', {
       is: Joi.string().min(8).max(30).required(),
