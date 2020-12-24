@@ -54,6 +54,21 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
     phone_number: forUpdate
       ? Joi.string().max(30).allow('').messages({ 'string.max':'Le numéro de téléphone ne doit pas dépasser 30 caractères'})
       : Joi.string().max(30).allow('').messages({'string.max':'Le numéro de téléphone ne doit pas dépasser 30 caractères' }),
+    bio: forUpdate
+      ? Joi.string().allow('')
+      : Joi.string().allow(''),
+    photo_url: forUpdate
+      ? Joi.string().allow('')
+      : Joi.string().allow(''),
+    instagram_url: forUpdate
+      ? Joi.string().allow('')
+      : Joi.string().allow(''),
+    facebook_url: forUpdate
+      ? Joi.string().allow('')
+      : Joi.string().allow(''),
+    twitter_url: forUpdate
+      ? Joi.string().allow('')
+      : Joi.string().allow(''),
     password_confirmation: Joi.when('password', {
       is: Joi.string().min(8).max(30).required(),
       then: Joi.any()

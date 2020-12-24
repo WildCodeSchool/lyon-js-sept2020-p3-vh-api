@@ -10,8 +10,8 @@ module.exports.handleAnUser = async (req, res) => {
 }
 
 module.exports.handleOneUserCreation = async (req, res) => {
-    const { firstname, lastname, email, password, password_confirmation, phone: phone_number } = req.body;
-    const createdUserId = await createUser({firstname, lastname, email, password, password_confirmation, phone_number});
+    const { firstname, lastname, email, password, password_confirmation, phone: phone_number, photo_url, bio, instagram_url, facebook_url, twitter_url } = req.body;
+    const createdUserId = await createUser({firstname, lastname, email, password, password_confirmation, phone_number, photo_url, bio, instagram_url, facebook_url, twitter_url});
     return res.status(201).json(createdUserId)
 }
 
