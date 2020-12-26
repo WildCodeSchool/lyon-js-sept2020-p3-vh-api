@@ -13,7 +13,7 @@ module.exports = (app) => {
   app.use('/me', currentUserRoutes);
   app.use('/products', wineRoute);
   app.use('/sponsors', sponsorsRoutes);
-  app.use('/', carrouselRoute);
+  app.use('/carrousel', carrouselRoute);
   app.use('/contact', contactRouter);
 };
 
