@@ -1,24 +1,13 @@
-const router = require('express').Router();
+const eventsRouter = require('express').Router();
 const asyncHandler = require('express-async-handler');
 const {handleAllEvents, handleCreateEvent, handleUpdateEvent, handleDeleteEvent} = require('../controllers/events.js');
-const requireAdmin = require('../middlewares/requireAdmin.js');
+// const requireAdmin = require('../middlewares/requireAdmin.js');
 const requireRequestBody = require('../middlewares/requireRequestBody.js');
 
 
-router.get('/', asyncHandler(handleAllEvents));
+eventsRouter.get('/', asyncHandler(handleAllEvents));
+eventsRouter.post('/',requireRequestBody, asyncHandler(handleCreateEvent));
+eventsRouter.put('/:id',requireRequestBody,asyncHandler(handleUpdateEvent));
+eventsRouter.delete('/:id', asyncHandler(handleDeleteEvent));
 
-router.post(
-  '/',
-  requireRequestBody,
-  requireAdmin,
-  asyncHandler(handleCreateEvent)
-);
-
-router.put(
-  '/:id',
-  requireRequestBody, requireAdmin,
-  asyncHandler(handleUpdateEvent)
-);
-router.delete('/:id', requireAdmin, asyncHandler(handleDeleteEvent));
-
-module.exports = router;
+module.exports = eventsRouter;
