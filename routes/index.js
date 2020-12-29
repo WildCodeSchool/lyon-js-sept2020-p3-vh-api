@@ -6,6 +6,7 @@ const wineRoute = require('./wine');
 const contactRouter = require('./contact');
 const sponsorsRoutes = require('./sponsors');
 const carrouselRoute = require('./carrousel');
+const eventsRouter = require('./events');
 
 module.exports = (app) => {
   app.use('/users', usersRouter);
@@ -15,5 +16,6 @@ module.exports = (app) => {
   app.use('/sponsors', sponsorsRoutes);
   app.use('/carrousel', carrouselRoute);
   app.use('/contact', contactRouter);
+  app.use('/events', eventsRouter);
 };
 
