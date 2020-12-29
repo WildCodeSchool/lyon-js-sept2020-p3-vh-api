@@ -1,6 +1,5 @@
 const { findAllEvents, createEvent, updateEvent, deleteEvent } = require('../models/events');
 
-
 module.exports.handleAllEvents = async (req, res) => {
  const datas = await findAllEvents();
  res.send(datas.map(({ id, email }) => ({ id, email })));

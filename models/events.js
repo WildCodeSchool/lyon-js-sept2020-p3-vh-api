@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require('joi').extend(require('@joi/date'));
 const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js');
 const {ValidationError, RecordNotFoundError } = require('../error-types')
 const db = require ('../db.js')
@@ -10,29 +10,29 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
   const forUpdate = !!udpatedRessourceId;
   const schema = Joi.object().keys({
     date: forUpdate
-      ? Joi.date().format("DD/MM/YYYY").allow('').messages({'date':'La date est manquante','format' :"Le format de la date n'est pas correct. Merci de saisir une date sous la forme "})
-      : Joi.date().format("DD/MM/YYYY").required().messages({'required':'La date est manquante','format' :"Le format de la date n'est pas correct. Merci de saisir une date sous la forme "}),
+      ? Joi.date().format('YYYY-MM-DD').messages({'date':'La date est manquante','format' :"Le format de la date n'est pas correct. Merci de saisir une date sous la forme "})
+      : Joi.date().format('YYYY-MM-DD').required().messages({'any.required':'La date est manquante','format' :"Le format de la date n'est pas correct. Merci de saisir une date sous la forme "}),
     title: forUpdate
-      ? Joi.string().min(1).max(100).allow('').messages({ 'string.min':"Le titre de l'événement est manquant",'string.max':"Le titre de l'événement ne doit pas excéder 100 caractères'"})
-      : Joi.string().min(1).max(100).messages({ 'string.min':"Le titre de l'événement est manquant",'string.max':"Le titre de l'événement ne doit pas excéder 100 caractères'"}),
+      ? Joi.string().min(1).max(100).messages({ 'any.required':"Le titre de l'événement est manquant",'string.max':"Le titre de l'événement ne doit pas excéder 100 caractères'"})
+      : Joi.string().required().max(100).messages({ 'any.required':"Le titre de l'événement est manquant",'string.max':"Le titre de l'événement ne doit pas excéder 100 caractères'"}),
     price: forUpdate 
-    ? Joi.number().allow('').messages({'number':"Le prix contients des caractères invalides"}) 
-    : Joi.number().allow('').required().messages({'required': 'Le prix est manquant', 'number':"Le prix contients des caractères invalides"}),
+    ? Joi.number().messages({'number':"Le prix contients des caractères invalides"}) 
+    : Joi.number().required().messages({'any.required': 'Le prix est manquant', 'number':"Le prix contients des caractères invalides"}),
     description: forUpdate
-      ? Joi.string().min(1).allow('').messages({ 'string.min':'La descrption est manquante' })
-      : Joi.string().min(1).messages({ 'string.min':'La descrption est manquante' }),
+      ? Joi.string()
+      : Joi.string().required().messages({ 'any.required':'La descrption est manquante', 'string.empty': 'La description est manquante' }),
     moderator_id: forUpdate
-      ? Joi.number().integer().allow('').messages({ 'number':"Le modérateur n'est pas valide", 'integer':"Le modérateur n'est pas valide"})
-      : Joi.number().integer().required().messages({ 'required' :'Le modérateur est manquant', 'number':"Le modérateur n'est pas valide", 'integer':"Le modérateur n'est pas valide"}),
+      ? Joi.number().integer().messages({ 'number':"Le modérateur n'est pas valide", 'integer':"Le modérateur n'est pas valide"})
+      : Joi.number().integer().required().messages({ 'any.required' :'Le modérateur est manquant', 'number':"Le modérateur n'est pas valide", 'integer':"Le modérateur n'est pas valide"}),
     duration_seconds: forUpdate
-      ? Joi.number().integer().allow('').messages({ 'number':"La durée n'est pas valide", 'integer':"La durée n'est pas valide"})
-      : Joi.number().integer().required().messages({ 'required' :'La durée est manquante', 'number':"La durée n'est pas valide", 'integer':"La durée n'est pas valide"}),
+      ? Joi.number().integer().messages({ 'number':"La durée n'est pas valide", 'integer':"La durée n'est pas valide"})
+      : Joi.number().integer().required().messages({ 'any.required' :'La durée est manquante', 'number':"La durée n'est pas valide", 'integer':"La durée n'est pas valide"}),
     main_picture_url: forUpdate
-      ? Joi.string().max(255).allow('').messages({'string.max' :"Le lien de l'image dépasse la limite de 255 caractères"})
-      : Joi.string().max(255).allow('').messages({'string.max': "Le lien de l'image dépasse la limite de 255 caractères"}),
+      ? Joi.string().max(255).messages({'string.max' :"Le lien de l'image dépasse la limite de 255 caractères"})
+      : Joi.string().max(255).messages({'string.max': "Le lien de l'image dépasse la limite de 255 caractères"}),
     address_id: forUpdate
-      ? Joi.number().integer().allow('').messages({ 'number':"L'adresse n'est pas valide", 'integer':"L'adresse n'est pas valide"})
-      : Joi.number().integer().required().messages({ 'required' :"L'adresse est manquante", 'number':"L'adresse n'est pas valide", 'integer':"L'adresse n'est pas valide"}),
+      ? Joi.number().integer().messages({ 'number':"L'adresse n'est pas valide", 'integer':"L'adresse n'est pas valide"})
+      : Joi.number().integer().required().messages({ 'any.required' :"L'adresse est manquante", 'number':"L'adresse n'est pas valide", 'integer':"L'adresse n'est pas valide"}),
   });
   const { error } = schema.validate(attributes, {
     abortEarly: false,
@@ -60,12 +60,12 @@ const findAllEvents = async () => {
     return db.query('SELECT * FROM event');
 }
 
-// create an user
+// create an event
 const createEvent = async (datas) => {
   await validate(datas);
-  return db.query(`INSERT INTO user SET ${definedAttributesToSqlSet(datas)}`, datas
+  return db.query(`INSERT INTO event SET ${definedAttributesToSqlSet(datas)}`, datas)
   .then((res) => findOneEvent(res.insertId))
-  )};
+  };
 
 // delete one user by his Id
 const deleteEvent = async (id, failIfNotFound = true) => {
