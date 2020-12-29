@@ -44,18 +44,18 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
 
 /// MODELS ///
 
-// find one user by his id
+// find one event by his id
 const findOneEvent = async (id, failIfNotFound = true) => {
   const eventId = id
   const rows = await db.query('SELECT * FROM event WHERE id=?', [eventId]);
   if (rows.length) {
     return rows[0];
   }
-  if (failIfNotFound) throw new RecordNotFoundError('users', eventId);
+  if (failIfNotFound) throw new RecordNotFoundError('event', eventId);
   return null;
 };
 
-// find all users in database
+// find all events in database
 const findAllEvents = async () => {
     return db.query('SELECT * FROM event');
 }
@@ -67,22 +67,22 @@ const createEvent = async (datas) => {
   .then((res) => findOneEvent(res.insertId))
   };
 
-// delete one user by his Id
+// delete one event by his Id
 const deleteEvent = async (id, failIfNotFound = true) => {
-    const res = await db.query('DELETE FROM user WHERE id=?', [id]);
+    const res = await db.query('DELETE FROM event WHERE id=?', [id]);
     if (res.affectedRows !== 0) {
       return true;
     }
-    if (failIfNotFound) throw new RecordNotFoundError('users', id);
+    if (failIfNotFound) throw new RecordNotFoundError('event', id);
     return false;
 };
-// update one user by his id
+// update one event by his id
 
 const updateEvent = async (id, newAttributes) => {
   await validate(newAttributes, { udpatedRessourceId: id });
   const namedAttributes = definedAttributesToSqlSet(newAttributes);
   return db
-    .query(`UPDATE user SET ${namedAttributes} WHERE id = :id`, {
+    .query(`UPDATE event SET ${namedAttributes} WHERE id = :id`, {
       ...newAttributes,
       id,
     })
