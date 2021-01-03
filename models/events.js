@@ -56,7 +56,7 @@ const findOneEvent = async (id, failIfNotFound = true) => {
 
 // find all events in database
 const findAllEvents = async () => {
-    return db.query('SELECT * FROM event');
+  return db.query('SELECT * FROM event');
 }
 
 // create an event

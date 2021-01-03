@@ -63,7 +63,7 @@ describe(`events endpoints`, () => {
       });
 
       it('the returned elements have expected properties', async () => {
-        const expectedProps = ['id'];
+        const expectedProps = ['id', 'date', 'moderator_id', 'main_picture_url', 'address_id'];
         res.body.forEach((element) => {
           expectedProps.forEach((prop) => {
             expect(element[prop]).not.toBe(undefined);

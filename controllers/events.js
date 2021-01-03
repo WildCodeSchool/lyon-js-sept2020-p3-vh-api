@@ -2,7 +2,7 @@ const { findAllEvents, createEvent, updateEvent, deleteEvent } = require('../mod
 
 module.exports.handleAllEvents = async (req, res) => {
  const datas = await findAllEvents();
- res.send(datas.map(({ id, email }) => ({ id, email })));
+ res.send(datas.map(({ id, date, moderator_id, main_picture_url, address_id }) => ({id, date, moderator_id, main_picture_url, address_id })));
 };
 
 module.exports.handleCreateEvent = async (req, res) => {
