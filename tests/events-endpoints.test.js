@@ -7,7 +7,7 @@ const db = require ('../db.js')
 
 const getValidEventAttributes = () => {
   return {
-    date: faker.date.future(),
+    date: '2020-01-04',
     title: faker.lorem.sentence(),
     price: faker.commerce.price(),
     description: faker.lorem.paragraph(),
@@ -41,8 +41,8 @@ const createAddressRecord = () => {
 
 
 let res;
-// let testedEntity;
-// let attributes;
+let testedEntity;
+let attributes;
 
 describe(`events endpoints`, () => {
   describe(`GET /events`, () => {
@@ -72,256 +72,172 @@ describe(`events endpoints`, () => {
       });
     });
   });
-//   describe(`GET /users/:id`, () => {
-//     describe('with existing entity id', () => {
-//       beforeAll(async () => {
-//         testedEntity = await createRecord();
-//         res = await request(app).get(`/users/${testedEntity.id}`);
-//       });
+    describe(`POST /events`, () => {
+      describe('without request body', () => {
+        beforeAll(async () => {
+          await createUserRecord()
+          await createAddressRecord()
+          res = await request(app).post(`/events`);
+        });
 
-//       it('returns 200', () => {
-//         expect(res.status).toBe(200);
-//       });
+        it('returns 400 status', async () => {
+          expect(res.statusCode).toEqual(400);
+        });
+      });
+    describe('when valid datas are sent', () => {
+      beforeAll(async () => {
+        attributes = getValidEventAttributes();
+        await createUserRecord()
+        await createAddressRecord()
+        res = await request(app).post(`/events`).send(attributes);
+      });
 
-//       it('returned object in body has correct properties', () => {
-//         expect(res.body).toEqual(testedEntity);
-//       });
+      it('returns 201 status', async () => {
+        expect(res.statusCode).toEqual(201);
+      });
 
-//       it('returned object does not contain password', () => {
-//         expect(res.body.password_confirmation).toBe(undefined);
-//         expect(res.body.password).toBe(undefined);
-//         expect(res.body.encrypted_password).toBe(undefined);
-//       });
-//     });
+      it('returns the id of the created event', async () => {
+        expect(res.body).toHaveProperty('id');
+      });
+    });
+    describe('when just title is provided', () => {
+      beforeAll(async () => {
+        await createUserRecord()
+        await createAddressRecord()
+        res = await request(app).post(`/events`).send({
+          title: faker.lorem.sentence(),
+        });
+      });
 
-//     describe('with non-existing entity id', () => {
-//       beforeAll(async () => {
-//         res = await request(app).get(`/users/9999999999`);
-//       });
+      it('returns a 422 status', async () => {
+        expect(res.status).toBe(422);
+      });
 
-//       it('returns 404', () => {
-//         expect(res.status).toBe(404);
-//       });
-//     });
-//   });
-//     describe('without request body', () => {
-//       beforeAll(async () => {
-//         res = await request(app).post(`/users`);
-//       });
+      it('returns an error message', async () => {
+        expect(res.body).toHaveProperty('errorMessage');
+      });
+    });
+    describe('when an invalid date is provided', () => {
+      beforeAll(async () => {
+        attributes = getValidEventAttributes();
+        await createUserRecord()
+        await createAddressRecord()
+        const datasWithInvalidDate = {...attributes, date: 'invalid date'}
+        res = await request(app).post(`/events`).send(datasWithInvalidDate);
+      });
 
-//       it('returns 400 status', async () => {
-//         expect(res.statusCode).toEqual(400);
-//       });
-//     });
-//     describe('when valid datas are sent', () => {
-//       beforeAll(async () => {
-//         attributes = getValidAttributes();
-//         res = await request(app).post(`/users`).send(attributes);
-//       });
+      it('returns a 422 status', async () => {
+        expect(res.status).toBe(422);
+      });
 
-//       it('returns 201 status', async () => {
-//         expect(res.statusCode).toEqual(201);
-//       });
+      it('returns an error message', async () => {
+        expect(res.body).toHaveProperty('errorMessage');
+      });
+    });
 
-//       it('returns the id of the created user', async () => {
-//         expect(res.body).toHaveProperty('id');
-//       });
-//     });
-//     describe('when a user with the same email already exists in DB', () => {
-//       beforeAll(async () => {
-//         const validEntity = await createRecord();
-//         res = await request(app)
-//           .post(`/users`)
-//           .send({ ...getValidAttributes(), email: validEntity.email });
-//       });
+    describe("when description isn't provided", () => {
+      beforeAll(async () => {
+        attributes = getValidEventAttributes();
+        delete attributes.description;
+        await createUserRecord()
+        await createAddressRecord()
+        res = await request(app).post(`/events`).send(attributes);
+      });
 
-//       it('returns a 422 status', async () => {
-//         expect(res.status).toBe(422);
-//       });
+      it('returns a 422 status', async () => {
+        expect(res.status).toBe(422);
+      });
 
-//       it('returns an error message', async () => {
-//         expect(res.body).toHaveProperty('errorMessage');
-//         expect(Array.isArray(res.body.errorsByField)).toBe(true);
-//         expect(
-//           !!res.body.errorsByField.find(
-//             (e) => e.path.includes('email') && e.type === 'unique'
-//           )
-//         ).toBe(true);
-//       });
-//     });
-
-//     describe('when email is not provided', () => {
-//       beforeAll(async () => {
-//         res = await request(app).post(`/users`).send({
-//           password: 'zfeyfgeyfgr',
-//           password_confirmation: 'zfeyfgeyfgr',
-//         });
-//       });
-
-//       it('returns a 422 status', async () => {
-//         expect(res.status).toBe(422);
-//       });
-
-//       it('returns an error message', async () => {
-//         expect(res.body).toHaveProperty('errorMessage');
-//       });
-//     });
-
-//     describe('when password is not provided', () => {
-//       beforeAll(async () => {
-//         res = await request(app).post(`/users`).send({
-//           password_confirmation: 'zfeyfgeyfgr',
-//           email: 'john.doe@gmail.com',
-//         });
-//       });
-
-//       it('returns a 422 status', async () => {
-//         expect(res.status).toBe(422);
-//       });
-
-//       it('retuns an error message', async () => {
-//         expect(res.body).toHaveProperty('errorMessage');
-//       });
-//     });
-
-//     describe('when password_confirmation is not provided', () => {
-//       beforeAll(async () => {
-//         res = await request(app).post(`/users`).send({
-//           password: 'zfeyfgeyfgr',
-//           email: 'john.doe@gmail.com',
-//         });
-//       });
-
-//       it('returns a 422 status', async () => {
-//         expect(res.status).toBe(422);
-//       });
-
-//       it('retuns an error message', async () => {
-//         expect(res.body).toHaveProperty('errorMessage');
-//       });
-//     });
-//   });
-//   describe(`PUT /users/:id`, () => {
-
-//     describe('without request body', () => {
-//       beforeAll(async () => {
-//         testedEntity = await createRecord();
-//         res = await request(app).put(
-//           `/users/${testedEntity.id}`
-//         );
-//       });
-
-//       it('returns 400 status', async () => {
-//         expect(res.statusCode).toEqual(400);
-//       });
-//     });
-//     describe('when passwords are not provided', () => {
-//       beforeAll(async () => {
-//         testedEntity = await createRecord();
-//         attributes = getValidAttributes();
-//         delete attributes.password_confirmation;
-//         delete attributes.password;
-//         res = await request(app)
-//           .put(`/users/${testedEntity.id}`)
-//           .send(attributes);
-//       });
-
-//       it('returns a 200 status', async () => {
-//         expect(res.status).toBe(200);
-//       });
-//     });
-
-//     describe('when password is provided but password_confirmation is not provided', () => {
-//       beforeAll(async () => {
-//         testedEntity = await createRecord();
-//         attributes = getValidAttributes();
-//         delete attributes.password_confirmation;
-//         res = await request(app)
-//           .put(`/users/${testedEntity.id}`)
-//           .send(attributes);
-//       });
-
-//       it('returns a 422 status', async () => {
-//         expect(res.status).toBe(422);
-//       });
-
-//       it('retuns an error message', async () => {
-//         expect(res.body).toHaveProperty('errorMessage');
-//       });
-//     });
-
-//     describe('when a user with the same email already exists in DB', () => {
-//       beforeAll(async () => {
-//         const other = await createRecord();
-//         testedEntity = await createRecord();
-//         attributes = { ...getValidAttributes(), email: other.email };
-//         res = await request(app)
-//           .put(`/users/${testedEntity.id}`)
-//           .send(attributes);
-//       });
-
-//       it('returns a 422 status', async () => {
-//         expect(res.status).toBe(422);
-//       });
-
-//       it('returns an error message', async () => {
-//         expect(res.body).toHaveProperty('errorMessage');
-//         expect(Array.isArray(res.body.errorsByField)).toBe(true);
-//         expect(
-//           !!res.body.errorsByField.find(
-//             (e) => e.path.includes('email') && e.type === 'unique'
-//           )
-//         ).toBe(true);
-//       });
-//     });
-//     describe('with a valid entity', () => {
-//       beforeAll(async () => {
-//         testedEntity = await createRecord();
-//         attributes = getValidAttributes();
-//         res = await request(app)
-//           .put(`/users/${testedEntity.id}`)
-//           .send(attributes);
-//       });
-
-//       it('returns 200', () => {
-//         expect(res.status).toBe(200);
-//       });
-
-//       it('returns the entity with correct properties', () => {
-//         expect(res.body.id).toBe(testedEntity.id);
-//         expect(res.body.email).toBe(attributes.email);
-//       });
-//     });
-//     describe('with an non-existing entity id', () => {
-//       beforeAll(async () => {
-//         res = await request(app)
-//           .put(`/users/99999999`)
-//           .send(getValidAttributes());
-//       });
-
-//       it('returns 404', () => {
-//         expect(res.status).toBe(404);
-//       });
-//     });
-//   });
-//   describe(`DELETE /users/:id`, () => {
-//     describe('with a valid entity', () => {
-//       beforeAll(async () => {
-//         const user = await createRecord();
-//         res = await request(app).delete(`/users/${user.id}`);
-//       });
-
-//       it('returns 204', () => {
-//         expect(res.status).toBe(204);
-//       });
-//     });
-//     describe('with an non-existing entity id', () => {
-//       beforeAll(async () => {
-//         res = await request(app).delete(`/users/99999999`);
-//       });
-
-//       it('returns 404', () => {
-//         expect(res.status).toBe(404);
-//       });
-//     });
+      it('retuns an error message', async () => {
+        expect(res.body).toHaveProperty('errorMessage');
+      });
+    });
   });
+  describe(`PUT /events/:id`, () => {
+
+    describe('without request body', () => {
+      beforeAll(async () => {
+        await createUserRecord()
+        await createAddressRecord()
+        testedEntity = await createEventRecord();
+        res = await request(app).put(
+          `/events/${testedEntity.id}`
+        );
+      });
+
+      it('returns 400 status', async () => {
+        expect(res.statusCode).toEqual(400);
+      });
+    });
+    describe("when price isn't provided", () => {
+      beforeAll(async () => {
+        await createUserRecord()
+        await createAddressRecord()
+        testedEntity = await createEventRecord();
+        attributes = getValidEventAttributes();
+        delete attributes.price
+        res = await request(app)
+          .put(`/events/${testedEntity.id}`)
+          .send(attributes);
+      });
+
+      it('returns a 422 status', async () => {
+        expect(res.status).toBe(422);
+      });
+    });
+    describe('with a valid entity', () => {
+      beforeAll(async () => {
+        await createUserRecord()
+        await createAddressRecord()
+        testedEntity = await createEventRecord();
+        attributes = getValidEventAttributes();
+        res = await request(app)
+          .put(`/events/${testedEntity.id}`)
+          .send(attributes);
+      });
+
+      it('returns 200', () => {
+        expect(res.status).toBe(200);
+      });
+
+      it('returns the entity with correct properties', () => {
+        expect(res.body.id).toBe(testedEntity.id);
+        expect(res.body.description).toBe(attributes.description);
+      });
+    });
+    describe('with an non-existing entity id', () => {
+      beforeAll(async () => {
+        res = await request(app)
+          .put(`/events/99999999`)
+          .send(getValidEventAttributes());
+      });
+
+      it('returns 404', () => {
+        expect(res.status).toBe(404);
+      });
+    });
+  });
+  describe(`DELETE /events/:id`, () => {
+    describe('with a valid entity', () => {
+      beforeAll(async () => {
+        await createUserRecord()
+        await createAddressRecord()
+        const event = await createEventRecord();
+        res = await request(app).delete(`/events/${event.id}`);
+      });
+
+      it('returns 204', () => {
+        expect(res.status).toBe(204);
+      });
+    });
+    describe('with an non-existing entity id', () => {
+      beforeAll(async () => {
+        res = await request(app).delete(`/events/99999999`);
+      });
+
+      it('returns 404', () => {
+        expect(res.status).toBe(404);
+      });
+    });
+  });
+});
