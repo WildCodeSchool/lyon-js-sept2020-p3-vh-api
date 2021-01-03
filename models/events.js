@@ -3,7 +3,6 @@ const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.
 const {ValidationError, RecordNotFoundError } = require('../error-types')
 const db = require ('../db.js')
 
-
 // validate datas on update or create
 const validate = async (attributes, options = { udpatedRessourceId: null }) => {
   const { udpatedRessourceId } = options;
