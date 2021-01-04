@@ -4,6 +4,9 @@ const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.
 const {ValidationError, RecordNotFoundError } = require('../error-types')
 const db = require ('../db.js')
 
+const findAllAnim = async () => {
+  return db.query(`SELECT * FROM user WHERE role = "animator"`);
+}
 
 // find one user by his id
 const findOne = async (id, failIfNotFound = true) => {
@@ -118,7 +121,7 @@ const findByEmail = async (email, failIfNotFound = true) => {
 
 // find all users in database
 const findAll = async () => {
-    return db.query('SELECT * FROM user');
+    return db.query(`SELECT * FROM user`);
 }
 
 // create an user
@@ -156,4 +159,4 @@ const updateUser = async (id, newAttributes) => {
     .then(() => findOne(id));
 };
 
-module.exports = { createUser, verifyPassword, findByEmail, findAll, findOne, deleteUser, updateUser}
+module.exports = { createUser, verifyPassword, findByEmail, findAll, findOne, deleteUser, updateUser, findAllAnim }

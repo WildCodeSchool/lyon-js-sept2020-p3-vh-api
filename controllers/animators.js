@@ -1,11 +1,11 @@
-const { getAllAnimators,getOneAnimator, postOneAnimator,putOneAnimator, deleteOneAnimator  } = require('../models/animators.js');
+/* const { getAllAnimators/* ,getOneAnimator, postOneAnimator,putOneAnimator, deleteOneAnimator */  /* } = require('../models/animators.js');
 
 module.exports.handleGetAllAnimators = async (req, res) => {
   const rawData = await getAllAnimators();
   res.send(rawData);
-};
+}; */ 
 
-module.exports.handleGetOneAnimator = async (req, res) => {
+/* module.exports.handleGetOneAnimator = async (req, res) => {
   res.send(await getOneAnimator(req.params.id));
 };
 
@@ -25,4 +25,4 @@ module.exports.handlePutOneAnimator = async (req, res) => {
 module.exports.handleDeleteOneAnimator = async (req, res) => {
   await deleteOneAnimator(req);
   res.sendStatus(204);
-};
+}; */

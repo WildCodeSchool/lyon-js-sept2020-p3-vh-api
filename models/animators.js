@@ -1,12 +1,12 @@
-const db = require('../db.js');
-const { RecordNotFoundError } = require('../error-types');
-const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js');
+/* const db = require('../db.js');
+/* const { RecordNotFoundError } = require('../error-types');
+const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js'); */
 
-const getAllAnimators = async () => {
+/* const getAllAnimators = async () => {
   return db.query(`SELECT * FROM user WHERE role='animator'`)
-};
+}; */
 
-const getOneAnimator = async (id, failIfNotFound = true) => {
+/* const getOneAnimator = async (id, failIfNotFound = true) => {
   const rows = await db.query('SELECT * FROM user WHERE id = ?', [id]);
   if (rows.length) {
     return rows[0];
@@ -41,9 +41,11 @@ const deleteOneAnimator = async (req) => {
     return db.query('DELETE FROM user WHERE id = ?'
     ,[idAnimator]
     )
-  };
+  }; */
 
 
 
 
-module.exports = {getAllAnimators,getOneAnimator, postOneAnimator,putOneAnimator, deleteOneAnimator };
+/* module.exports = {getAllAnimators *//* ,getOneAnimator, postOneAnimator,putOneAnimator, deleteOneAnimator  }; */
+
+

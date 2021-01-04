@@ -1,4 +1,15 @@
-const {findAll, findOne, createUser, deleteUser, updateUser} = require ('../models/users.js')
+const {findAll, findOne, createUser, deleteUser, updateUser, findAllAnim } = require ('../models/users.js')
+
+
+module.exports.handleAllAnimators = async (req, res) => {
+    const datas = await findAllAnim(req);
+    res.send(datas.map(({ id, email }) => ({ id, email })));
+} 
+
+/* module.exports.handleAllAnimators = async (req, res) => {
+    const rawData = await findAllAnim();
+    res.send(rawData); 
+};  */
 
 module.exports.handleAllUsers = async (req, res) => {
     const datas = await findAll();
