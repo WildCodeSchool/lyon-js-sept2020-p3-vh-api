@@ -11,8 +11,8 @@ module.exports.handleGetOneMessage = async (req, res) => {
 };
 
 module.exports.handleOneMessagePost = async (req, res) => {
-  const { firstname, lastname, email, message } = req.body;
-  const data = await postOneMessage({ firstname, lastname, email, message });
+  const { firstname, lastname, email, message, purpose } = req.body;
+  const data = await postOneMessage({ firstname, lastname, email, message, purpose });
   return res.status(201).send(data);
 };
 
