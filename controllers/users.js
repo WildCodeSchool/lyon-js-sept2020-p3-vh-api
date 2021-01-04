@@ -4,12 +4,7 @@ const {findAll, findOne, createUser, deleteUser, updateUser, findAllAnim } = req
 module.exports.handleAllAnimators = async (req, res) => {
     const datas = await findAllAnim(req);
     res.send(datas.map(({ id, email, role }) => ({ id, email, role })));
-} 
-
-/* module.exports.handleAllAnimators = async (req, res) => {
-    const rawData = await findAllAnim();
-    res.send(rawData); 
-};  */
+}
 
 module.exports.handleAllUsers = async (req, res) => {
     const datas = await findAll();

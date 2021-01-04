@@ -4,11 +4,10 @@ const requireRequestBody = require('../middlewares/requireRequestBody.js');
 const { handleAllUsers, handleAnUser, handleOneUserCreation, handleOneUserDeletion, handleOneUserUpdate, handleAllAnimators  } = require ('../controllers/users')
 
 usersRouter.get('/',  asyncHandler(handleAllUsers)); // get all users
+usersRouter.get('/animators', asyncHandler(handleAllAnimators)); // get all animators
 usersRouter.get('/:id',asyncHandler(handleAnUser)); // get one user
 usersRouter.delete('/:id', asyncHandler(handleOneUserDeletion)); // delete one user
 usersRouter.post('/', requireRequestBody,asyncHandler(handleOneUserCreation)); // create one user
 usersRouter.put('/:id', requireRequestBody,asyncHandler(handleOneUserUpdate)); // update one user
-
-usersRouter.get('/animators', asyncHandler(handleAllAnimators)); // get all animators
 
 module.exports = usersRouter;
