@@ -302,3 +302,5 @@ describe(`users endpoints`, () => {
       });
     });
   });
+
+  exports.getValidAttributes = getValidAttributes;

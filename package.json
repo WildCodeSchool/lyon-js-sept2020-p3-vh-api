@@ -38,6 +38,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@joi/date": "^2.0.1",
     "argon2": "^0.27.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
