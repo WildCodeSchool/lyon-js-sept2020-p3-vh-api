@@ -18,5 +18,5 @@ module.exports.handleUpdateAddress = async (req, res) => {
 
 module.exports.handleDeleteAddress = async (req, res) => {
   await deleteAddress(req.params.id);
-  return res.status(204)
+  return res.sendStatus(204)
 };
