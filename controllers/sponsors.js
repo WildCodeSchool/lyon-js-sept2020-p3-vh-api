@@ -3,7 +3,7 @@ const { findSponsor, createSponsor, updateSponsor, deleteSponsor } = require('..
 
 module.exports.handleAllSponsor = async (req, res) => {
   const data = await findSponsor();
-  return res.status(201).send(data);
+  return res.status(200).send(data);
 };
 
 module.exports.handleCreateSponsor = async (req, res) => {
@@ -13,10 +13,10 @@ module.exports.handleCreateSponsor = async (req, res) => {
 
 module.exports.handleUpdateSponsor = async (req, res) => {
   const data = await updateSponsor();
-  return res.status(201).send(data);
+  return res.send(data);
 };
 
 module.exports.handleDeleteSponsor = async (req, res) => {
-  const data = await deleteSponsor();
-  return res.status(201).send(data);
+  await deleteSponsor(req.params.id);
+  return res.status(204)
 };
