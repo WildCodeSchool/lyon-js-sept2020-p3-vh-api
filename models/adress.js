@@ -30,15 +30,15 @@ const findAddress = async () => {
 }
 
 const createAddress = async (req) => {
-    const { name, image } = req.body;
+    const { street, zipcode, city } = req.body;
     return db.query
-    (`INSERT INTO address (name, image) VALUES (?, ?)`, [name, image])
+    (`INSERT INTO address (street, zipcode, city) VALUES (?, ?, ?)`, [street, zipcode, city])
     .then((res) => findById(res.insertId));
   };
 
   const updateAddress = async (req) => { 
-    const { id, name, image } = req.body 
-    const rows = await db.query('UPDATE address SET WHERE id = ?', [id, name, image])
+    const { id, street, zipcode, city } = req.body 
+    const rows = await db.query('UPDATE address SET WHERE id = ?', [id, street, zipcode, city])
       .then(() => findOne(rows));
   };
   

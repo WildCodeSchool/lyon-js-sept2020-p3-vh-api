@@ -7,6 +7,7 @@ const contactRouter = require('./contact');
 const sponsorsRoutes = require('./sponsors');
 const carrouselRoute = require('./carrousel');
 const eventsRouter = require('./events');
+const addressRouter = require('./adress')
 
 module.exports = (app) => {
   app.use('/users', usersRouter);
@@ -17,5 +18,6 @@ module.exports = (app) => {
   app.use('/carrousel', carrouselRoute);
   app.use('/contact', contactRouter);
   app.use('/events', eventsRouter);
+  app.use('/adress', addressRouter);
 };
 
