@@ -1,4 +1,3 @@
-
 const usersRouter= require('./users');
 const authRouter= require('./auth');
 const currentUserRoutes = require('./currentUser');
@@ -20,4 +19,5 @@ module.exports = (app) => {
   app.use('/events', eventsRouter);
   app.use('/adress', addressRouter);
 };
+
 
