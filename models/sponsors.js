@@ -1,6 +1,7 @@
 // const Joi = require('joi');
 const db = require('../db.js');
 const { RecordNotFoundError, } = require('../error-types');
+const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js');
 
 
 const findOne = async (id, failIfNotFound = true) => {
@@ -38,10 +39,10 @@ const createSponsor = async (req) => {
     .then((res) => findById(res.insertId));
   };
 
-  const updateSponsor = async (req) => { 
-    const { id, name, image } = req.body 
-    const rows = await db.query('UPDATE sponsors SET WHERE id = ?', [id, name, image])
-      .then(() => findOne(rows));
+  const updateSponsor = async (id, newAttributes) => {
+    const namedAttributes = definedAttributesToSqlSet(newAttributes);
+    return db.query(`UPDATE sponsors SET ${namedAttributes} WHERE id = :id`, {...newAttributes, id})
+      .then(() => findOne(id));
   };
   
   const deleteSponsor = async (id, failIfNotFound = true) => {
