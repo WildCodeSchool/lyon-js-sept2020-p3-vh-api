@@ -12,7 +12,7 @@ module.exports.handleCreateSponsor = async (req, res) => {
   };
 
 module.exports.handleUpdateSponsor = async (req, res) => {
-  const data = await updateSponsor();
+  const data = await updateSponsor(req.params.id, req.body);
   return res.send(data);
 };
 

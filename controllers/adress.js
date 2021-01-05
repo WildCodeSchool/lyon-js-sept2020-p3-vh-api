@@ -12,7 +12,7 @@ module.exports.handleCreateAddress = async (req, res) => {
   };
 
 module.exports.handleUpdateAddress = async (req, res) => {
-  const data = await updateAddress();
+  const data = await updateAddress(req.params.id, req.body);
   return res.send(data);
 };
 

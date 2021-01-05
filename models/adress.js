@@ -1,5 +1,6 @@
 const db = require('../db.js');
-const { RecordNotFoundError, } = require('../error-types');
+const { RecordNotFoundError } = require('../error-types');
+const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js'); 
 
 const findOne = async (id, failIfNotFound = true) => {
     const rows = await db.query(`SELECT * FROM address WHERE id = ?`, [id]);
@@ -36,10 +37,10 @@ const createAddress = async (req) => {
     .then((res) => findById(res.insertId));
   };
 
-  const updateAddress = async (req) => { 
-    const { id, street, zipcode, city } = req.body 
-    const rows = await db.query('UPDATE address SET WHERE id = ?', [id, street, zipcode, city])
-      .then(() => findOne(rows));
+  const updateAddress = async (id, newAttributes) => {
+    const namedAttributes = definedAttributesToSqlSet(newAttributes);
+    return db.query(`UPDATE address SET ${namedAttributes} WHERE id = :id`, {...newAttributes, id})
+      .then(() => findOne(id));
   };
   
   const deleteAddress = async (id, failIfNotFound = true) => {
