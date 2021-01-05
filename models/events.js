@@ -70,4 +70,4 @@ const updateEvent = async (id, newAttributes) => {
     .then(() => findOneEvent(id));
 };
 
-module.exports = { findAllEvents, createEvent, updateEvent, deleteEvent }
+module.exports = { findAllEvents, createEvent, updateEvent, deleteEvent, findOneEvent }
