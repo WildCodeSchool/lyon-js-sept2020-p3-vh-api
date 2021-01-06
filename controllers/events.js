@@ -10,8 +10,8 @@ module.exports.handleAnEvent = async (req, res) => {
 }
 
 module.exports.handleCreateEvent = async (req, res) => {
- const { date, title, price , description, moderator_id, duration_seconds, main_picture_url, address_id } = req.body;
- const createdUserId = await createEvent({date, title, price , description, moderator_id, duration_seconds, main_picture_url, address_id});
+ const { date, title, price , description, moderator_id, duration_seconds, main_picture_url, address_id, wine_id } = req.body;
+ const createdUserId = await createEvent({date, title, price , description, moderator_id, duration_seconds, main_picture_url, address_id, wine_id});
  return res.status(201).json(createdUserId)
   };
 

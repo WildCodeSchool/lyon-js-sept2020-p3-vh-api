@@ -3,6 +3,7 @@ const faker = require('faker');
 const app = require('../app.js');
 const Events = require('../models/events.js');
 const {createUser} = require('../models/users.js');
+// const {postOneWine} = require('../models/wine.js');
 const db = require ('../db.js')
 
 const getValidEventAttributes = () => {
@@ -17,7 +18,8 @@ const getValidEventAttributes = () => {
     address_id: faker.random.number({
       'min': 1,
       'max': 2
-  })
+    }),
+    wine_id: faker.random.number(4)
   };
 };
 
@@ -35,6 +37,22 @@ const createUserRecord = () => {
 });
 }
 
+const createWineRecord = () => {
+  return {
+    id: 4,
+    name: "boubou",
+    vigneron: "boubou",
+    cepage: "boubou",
+    arome: "boubou",
+    price: "100000.00",
+    sommelier: null,
+    image: "MrBoubouLeChinchilla",
+    website: null,
+    specificities: null,
+    producteur: null
+}
+}
+
 const createAddressRecord = () => {
   return db.query(`INSERT INTO address (street, zipcode, city) VALUES ('18 rue Delandine', '69002', 'Lyon'), ('2 rue de la République', '69002', 'Lyon')`)
 };
@@ -48,6 +66,7 @@ describe(`events endpoints`, () => {
   describe(`GET /events`, () => {
     describe('when there are two items in DB', () => {
       beforeEach(async () => {
+        await createWineRecord()
         await createUserRecord()
         await createAddressRecord()
         await Promise.all([createEventRecord(), createEventRecord()]);

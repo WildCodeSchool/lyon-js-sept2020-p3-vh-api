@@ -14,6 +14,8 @@ const validate = async (attributes) => {
     duration_seconds: Joi.number().integer().required().messages({ 'any.required' :'La durée est manquante', 'number':"La durée n'est pas valide", 'integer':"La durée n'est pas valide"}),
     main_picture_url: Joi.string().max(255).messages({'string.max': "Le lien de l'image dépasse la limite de 255 caractères"}),
     address_id: Joi.number().integer().required().messages({ 'any.required' :"L'adresse est manquante", 'number':"L'adresse n'est pas valide", 'integer':"L'adresse n'est pas valide"}),
+    wine_id: Joi.number().integer().required().messages({ 'any.required' :"Le vin est manquant", 'number':"Le vin n'est pas valide", 'integer':"Le vin n'est pas valide"}),
+
   });
   const { error } = schema.validate(attributes, {
     abortEarly: false,
