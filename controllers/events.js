@@ -2,7 +2,7 @@ const { findAllEvents, findOneEvent, createEvent, updateEvent, deleteEvent } = r
 
 module.exports.handleAllEvents = async (req, res) => {
  const datas = await findAllEvents();
- res.send(datas.map(({ id, date, moderator_id, main_picture_url, address_id }) => ({id, date, moderator_id, main_picture_url, address_id })));
+ res.send(datas.map(({ id, date, title, price, description, moderator_id, duration_seconds, main_picture_url, address_id, street, zipcode, city, firstname, lastname, email, phone_number, bio, role, photo_url, website_url, facebook_url, twitter_url, instagram_url }) => ({ id, date, title, price, description, moderator_id, duration_seconds, main_picture_url, address_id, street, zipcode, city, firstname, lastname, email, phone_number, bio, role, photo_url, website_url, facebook_url, twitter_url, instagram_url })));
 };
 
 module.exports.handleAnEvent = async (req, res) => {

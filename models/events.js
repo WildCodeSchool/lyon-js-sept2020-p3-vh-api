@@ -28,8 +28,9 @@ const validate = async (attributes) => {
 // find one event by his id
 const findOneEvent = async (id, failIfNotFound = true) => {
   const eventId = id
-  const rows = await db.query('SELECT * FROM event WHERE id=?', [eventId]);
+  const rows = await db.query('SELECT * FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id WHERE e.id=?', [eventId]);
   if (rows.length) {
+    delete rows[0].encrypted_password
     return rows[0];
   }
   if (failIfNotFound) throw new RecordNotFoundError('event', eventId);
@@ -38,7 +39,7 @@ const findOneEvent = async (id, failIfNotFound = true) => {
 
 // find all events in database
 const findAllEvents = async () => {
-  return db.query('SELECT * FROM event');
+  return db.query('SELECT * FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id');
 }
 
 // create an event
