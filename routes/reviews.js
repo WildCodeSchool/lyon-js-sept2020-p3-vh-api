@@ -1,14 +1,16 @@
 const asyncHandler = require('express-async-handler');
-const reviewRouter = require('express').Router();
+const reviewsRouter = require('express').Router();
 
 const {
   handleReviewPost,
   handleReviewDelete,
   handleReviewGet,
+  handleReviewGetOne,
 } = require('../controllers/reviews');
 
-reviewRouter.get('/', asyncHandler(handleReviewGet));
-reviewRouter.post('/', asyncHandler(handleReviewPost));
-reviewRouter.delete('/:id', asyncHandler(handleReviewDelete));
+reviewsRouter.get('/', asyncHandler(handleReviewGet));
+reviewsRouter.get('/:id', asyncHandler(handleReviewGetOne));
+reviewsRouter.post('/', asyncHandler(handleReviewPost));
+reviewsRouter.delete('/:id', asyncHandler(handleReviewDelete));
 
-module.exports = reviewRouter;
+module.exports = reviewsRouter;
