@@ -30,7 +30,12 @@ if (!inTestEnv && !inProdEnv) {
 
 // middlewares
 
-const allowedOrigins = CORS_ALLOWED_ORIGINS.split(',');  // temporary deactivation//
+let allowedOrigins;
+
+if(CORS_ALLOWED_ORIGINS){
+  allowedOrigins = CORS_ALLOWED_ORIGINS.split(','); 
+}
+
 const corsOptions = {
   origin: (origin, callback) => {
     if (origin === undefined || allowedOrigins.indexOf(origin) !== -1) {
