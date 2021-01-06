@@ -3,7 +3,7 @@ const { RecordNotFoundError } = require('../error-types');
 const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js'); 
 
 const findOne = async (id, failIfNotFound = true) => {
-    const rows = await db.query(`SELECT * FROM address WHERE id = ?`, [id]);
+    const rows = await db.query(`SELECT * FROM address WHERE id =?`, [id]);
     if (rows.length) {
       return rows[0];
     }
@@ -11,8 +11,7 @@ const findOne = async (id, failIfNotFound = true) => {
     return null;
   };
 
-
-const findById = async (id, failIfNotFound = true) => {
+  const findById = async (id, failIfNotFound = true) => {
     const rows = await db.query('SELECT * FROM address WHERE id = ?', [id]);
     if (rows.length) {
       return rows[0];
@@ -20,7 +19,6 @@ const findById = async (id, failIfNotFound = true) => {
     if (failIfNotFound) throw new RecordNotFoundError
     return null;
   }
-
 
 const findAddress = async () => {
     const rows = await db.query('SELECT * FROM address');
@@ -54,4 +52,4 @@ const createAddress = async (req) => {
   
   
 
-module.exports = { findAddress, createAddress, updateAddress, deleteAddress };
+module.exports = { findAddress, findOne, createAddress, updateAddress, deleteAddress };
