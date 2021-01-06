@@ -1,8 +1,13 @@
-const { findAddress, createAddress, updateAddress, deleteAddress } = require('../models/adress');
+const { findAddress, findOne, createAddress, updateAddress, deleteAddress } = require('../models/adress');
 
 
 module.exports.handleAllAddress = async (req, res) => {
   const data = await findAddress();
+  return res.status(200).send(data);
+};
+
+module.exports.handleOneAddress = async (req, res) => {
+  const data = await findOne(req.params.id);
   return res.status(200).send(data);
 };
 
