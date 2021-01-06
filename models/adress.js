@@ -3,7 +3,6 @@ const { RecordNotFoundError } = require('../error-types');
 const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js'); 
 
 const findOne = async (id, failIfNotFound = true) => {
-  console.log(id);
     const rows = await db.query(`SELECT * FROM address WHERE id =?`, [id]);
     if (rows.length) {
       return rows[0];
