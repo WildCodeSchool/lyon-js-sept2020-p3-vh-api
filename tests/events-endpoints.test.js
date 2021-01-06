@@ -3,8 +3,8 @@ const faker = require('faker');
 const app = require('../app.js');
 const Events = require('../models/events.js');
 const {createUser} = require('../models/users.js');
-// const {postOneWine} = require('../models/wine.js');
-const db = require ('../db.js')
+const {createAddress} = require('../models/adress.js')
+const {postOneWine} = require('../models/wine.js');
 
 const getValidEventAttributes = () => {
   return {
@@ -15,11 +15,8 @@ const getValidEventAttributes = () => {
     moderator_id: 1,
     duration_seconds: faker.random.number(),
     main_picture_url: faker.image.imageUrl(),
-    address_id: faker.random.number({
-      'min': 1,
-      'max': 2
-    }),
-    wine_id: faker.random.number(4)
+    address_id: 1,
+    wine_id: 1
   };
 };
 
@@ -38,25 +35,35 @@ const createUserRecord = () => {
 }
 
 const createWineRecord = () => {
-  return {
-    id: 4,
-    name: "boubou",
-    vigneron: "boubou",
-    cepage: "boubou",
-    arome: "boubou",
-    price: "100000.00",
-    sommelier: null,
-    image: "MrBoubouLeChinchilla",
-    website: null,
-    specificities: null,
-    producteur: null
-}
+  return postOneWine({
+    name: faker.commerce.productName(),
+    vigneron: faker.name.firstName(),
+    cepage: faker.lorem.word(),
+    arome: faker.lorem.word(),
+    price: faker.commerce.price(),
+    sommelier: faker.name.lastName(),
+    image: faker.image.imageUrl(),
+    website: faker.internet.url(),
+    specificities: faker.lorem.sentence(),
+    producteur: faker.name.firstName(),
+})
 }
 
 const createAddressRecord = () => {
-  return db.query(`INSERT INTO address (street, zipcode, city) VALUES ('18 rue Delandine', '69002', 'Lyon'), ('2 rue de la République', '69002', 'Lyon')`)
+  return createAddress({
+    body: {
+    street: faker.address.streetAddress(),
+    zipcode: faker.address.zipCode(),
+    city: faker.address.city(),
+  }
+})
 };
 
+const createWineUserAddress = async () => {
+  await createWineRecord();
+  await createUserRecord();
+  await createAddressRecord();
+}
 
 let res;
 let testedEntity;
@@ -66,9 +73,7 @@ describe(`events endpoints`, () => {
   describe(`GET /events`, () => {
     describe('when there are two items in DB', () => {
       beforeEach(async () => {
-        await createWineRecord()
-        await createUserRecord()
-        await createAddressRecord()
+        await createWineUserAddress()
         await Promise.all([createEventRecord(), createEventRecord()]);
         res = await request(app).get('/events');
       });
@@ -94,8 +99,7 @@ describe(`events endpoints`, () => {
     describe(`POST /events`, () => {
       describe('without request body', () => {
         beforeAll(async () => {
-          await createUserRecord()
-          await createAddressRecord()
+          await createWineUserAddress()
           res = await request(app).post(`/events`);
         });
 
@@ -106,8 +110,7 @@ describe(`events endpoints`, () => {
     describe('when valid datas are sent', () => {
       beforeAll(async () => {
         attributes = getValidEventAttributes();
-        await createUserRecord()
-        await createAddressRecord()
+        await createWineUserAddress()
         res = await request(app).post(`/events`).send(attributes);
       });
 
@@ -121,8 +124,7 @@ describe(`events endpoints`, () => {
     });
     describe('when just title is provided', () => {
       beforeAll(async () => {
-        await createUserRecord()
-        await createAddressRecord()
+        await createWineUserAddress()
         res = await request(app).post(`/events`).send({
           title: faker.lorem.sentence(),
         });
@@ -139,8 +141,7 @@ describe(`events endpoints`, () => {
     describe('when an invalid date is provided', () => {
       beforeAll(async () => {
         attributes = getValidEventAttributes();
-        await createUserRecord()
-        await createAddressRecord()
+        await createWineUserAddress()
         const datasWithInvalidDate = {...attributes, date: 'invalid date'}
         res = await request(app).post(`/events`).send(datasWithInvalidDate);
       });
@@ -158,8 +159,7 @@ describe(`events endpoints`, () => {
       beforeAll(async () => {
         attributes = getValidEventAttributes();
         delete attributes.description;
-        await createUserRecord()
-        await createAddressRecord()
+        await createWineUserAddress()
         res = await request(app).post(`/events`).send(attributes);
       });
 
@@ -176,8 +176,7 @@ describe(`events endpoints`, () => {
 
     describe('without request body', () => {
       beforeAll(async () => {
-        await createUserRecord()
-        await createAddressRecord()
+        await createWineUserAddress()
         testedEntity = await createEventRecord();
         res = await request(app).put(
           `/events/${testedEntity.id}`
@@ -190,8 +189,7 @@ describe(`events endpoints`, () => {
     });
     describe("when price isn't provided", () => {
       beforeAll(async () => {
-        await createUserRecord()
-        await createAddressRecord()
+        await createWineUserAddress()
         testedEntity = await createEventRecord();
         attributes = getValidEventAttributes();
         delete attributes.price
@@ -206,8 +204,7 @@ describe(`events endpoints`, () => {
     });
     describe('with a valid entity', () => {
       beforeAll(async () => {
-        await createUserRecord()
-        await createAddressRecord()
+        await createWineUserAddress()
         testedEntity = await createEventRecord();
         attributes = getValidEventAttributes();
         res = await request(app)
@@ -239,8 +236,7 @@ describe(`events endpoints`, () => {
   describe(`DELETE /events/:id`, () => {
     describe('with a valid entity', () => {
       beforeAll(async () => {
-        await createUserRecord()
-        await createAddressRecord()
+        await createWineUserAddress()
         const event = await createEventRecord();
         res = await request(app).delete(`/events/${event.id}`);
       });

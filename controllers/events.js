@@ -16,8 +16,8 @@ module.exports.handleCreateEvent = async (req, res) => {
   };
 
 module.exports.handleUpdateEvent = async (req, res) => {
- const { date, title, price , description, moderator_id, duration_seconds, main_picture_url, address_id } = req.body;
- const attributes = {date, title, price , description, moderator_id, duration_seconds, main_picture_url, address_id };
+ const { date, title, price , description, moderator_id, duration_seconds, main_picture_url, address_id, wine_id } = req.body;
+ const attributes = {date, title, price , description, moderator_id, duration_seconds, main_picture_url, address_id, wine_id };
  const data = await updateEvent(req.params.id, attributes);
  res.send(data);
 };
