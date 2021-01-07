@@ -8,7 +8,7 @@ const requireRequestBody = require('../middlewares/requireRequestBody.js');
 faqRouter.get('/', asyncHandler(handleAllQuestions));
 faqRouter.get('/:id', asyncHandler(handleOneQuestion));
 faqRouter.post('/',requireRequestBody, asyncHandler(handleCreateQuestion));
-faqRouter.put('/:id',requireRequestBody,asyncHandler(handleUpdateQuestion));
+faqRouter.put('/:id', requireRequestBody, asyncHandler(handleUpdateQuestion));
 faqRouter.delete('/:id', asyncHandler(handleDeleteQuestion));
 
 module.exports = faqRouter;

@@ -17,62 +17,30 @@ module.exports.handleOneQuestion = async (req, res) => {
 
 module.exports.handleCreateQuestion = async (req, res) => {
  const {
-   name,
-   vigneron,
-   cepage,
-   arome,
-   price,
-   sommelier,
-   image,
-   website,
-   specificities,
-   producteur,
+   faq_title,
+   faq_content,
  } = req.body;
  const data = await postOneQuestion({
-   name,
-   vigneron,
-   cepage,
-   arome,
-   price,
-   sommelier,
-   image,
-   website,
-   specificities,
-   producteur,
+  faq_title,
+  faq_content,
  });
  return res.status(201).send(data);
 };
 
-module.exports.handlePutOneQuestion = async (req, res) => {
+module.exports.handleUpdateQuestion = async (req, res) => {
  const {
-   name,
-   vigneron,
-   cepage,
-   arome,
-   price,
-   sommelier,
-   image,
-   website,
-   specificities,
-   producteur,
+  faq_title,
+  faq_content,
  } = req.body;
  const attribute = {
-   name,
-   vigneron,
-   cepage,
-   arome,
-   price,
-   sommelier,
-   image,
-   website,
-   specificities,
-   producteur,
+  faq_title,
+  faq_content,
  };
  const data = await putOneQuestion(req.params.id, attribute);
  res.send(data);
 };
 
-module.exports.handleDeleteOneQuestion = async (req, res) => {
+module.exports.handleDeleteQuestion = async (req, res) => {
  await deleteOneQuestion(req.params.id);
  res.sendStatus(204);
 };
