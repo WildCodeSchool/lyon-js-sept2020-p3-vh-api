@@ -15,12 +15,12 @@ const getReview = async () => {
 };
 
 const postReview = async (req) => {
-  const { rating, comment } = req.body;
+  const { rating, id, comment, event_id, user_id } = req.body;
   return db
-    .query('INSERT INTO review (rating, comment) VALUES (?, ?)', [
-      rating,
-      comment,
-    ])
+    .query(
+      'INSERT INTO review (rating, id, comment, event_id, user_id) VALUES (?, ?, ?, ?, ?)',
+      [rating, id, comment, event_id, user_id]
+    )
     .then((res) => getOneReview(res.insertId));
 };
 
