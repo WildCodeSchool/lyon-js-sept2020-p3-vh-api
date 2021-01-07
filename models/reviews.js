@@ -1,6 +1,8 @@
 const db = require('../db.js');
 const { RecordNotFoundError } = require('../error-types');
 
+// helpers need to be done
+
 const getOneReview = async (id, failIfNotFound = true) => {
   const rows = await db.query('SELECT * FROM review WHERE id = ?', [id]);
   if (rows.length) {
