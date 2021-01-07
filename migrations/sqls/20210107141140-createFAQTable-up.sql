@@ -4,7 +4,7 @@ CREATE TABLE faq
     faq_title VARCHAR(255),
     faq_content TEXT
 );
-INSERT INTO faq (faq_title, faq_content) VALUES ("Qu'est ce que l'hypnose", "L’hypnose est un état de conscience modifiée, proche de l’état dans lequel vous vous trouvez lorsque vous rêvez, ou lorsque vous êtes totalement absorbé dans votre imagination.
+INSERT INTO faq (faq_title, faq_content) VALUES ("Qu'est ce que l'hypnose ?", "L’hypnose est un état de conscience modifiée, proche de l’état dans lequel vous vous trouvez lorsque vous rêvez, ou lorsque vous êtes totalement absorbé dans votre imagination.
 
 
 Comme par exemple, lorsque vous êtes absorbé par un livre qui vous passionne et que vous n’entendez plus rien de ce qui se passe autour de vous…
