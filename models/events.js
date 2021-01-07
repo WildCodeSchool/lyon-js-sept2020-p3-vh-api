@@ -30,7 +30,7 @@ const validate = async (attributes) => {
 // find one event by his id
 const findOneEvent = async (id, failIfNotFound = true) => {
   const eventId = id
-  const rows = await db.query('SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE e.id=?', [eventId]);
+  const rows = await db.query('SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE e.id=?', [eventId]);
   if (rows.length) {
     delete rows[0].encrypted_password
     return rows[0];
@@ -42,7 +42,7 @@ const findOneEvent = async (id, failIfNotFound = true) => {
 
 // find all events in database
 const findAllEvents = async () => {
-  return db.query('SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id');
+  return db.query('SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id');
 }
 
 // create an event
