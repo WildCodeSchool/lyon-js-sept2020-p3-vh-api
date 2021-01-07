@@ -1,5 +1,3 @@
-// Hello BouBou Karenson
-
 const {
   getAllWine,
   findById,
