@@ -11,12 +11,12 @@ module.exports.handleReviewGet = async (req, res) => {
 };
 
 module.exports.handleReviewGetOne = async (req, res) => {
-  await getOneReview(req.params.id);
-  res.sendStatus(204);
+  const data = await getOneReview(req.params.id);
+  res.send(data);
 };
 
 module.exports.handleReviewPost = async (req, res) => {
-  const rawData = await postReview(req);
+  const rawData = await postReview(req.body);
   res.json(rawData);
 };
 

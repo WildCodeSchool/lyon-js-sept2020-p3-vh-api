@@ -1,5 +1,6 @@
 const db = require('../db.js');
 const { RecordNotFoundError } = require('../error-types');
+const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js');
 
 // helpers need to be done
 
@@ -16,13 +17,9 @@ const getReview = async () => {
   return db.query('SELECT * FROM review');
 };
 
-const postReview = async (req) => {
-  const { rating, id, comment, event_id, user_id } = req.body;
+const postReview = async (data) => {
   return db
-    .query(
-      'INSERT INTO review (rating, id, comment, event_id, user_id) VALUES (?, ?, ?, ?, ?)',
-      [rating, id, comment, event_id, user_id]
-    )
+    .query(`INSERT INTO review SET ${definedAttributesToSqlSet(data)}`, data)
     .then((res) => getOneReview(res.insertId));
 };
 
