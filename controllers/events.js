@@ -9,13 +9,77 @@ const {
 module.exports.handleAllEvents = async (req, res) => {
   const datas = await findAllEvents();
   res.send(
-    datas.map(({ id, date, moderator_id, main_picture_url, address_id }) => ({
-      id,
-      date,
-      moderator_id,
-      main_picture_url,
-      address_id,
-    }))
+    datas.map(
+      ({
+        id,
+        date,
+        title,
+        price,
+        availabilities,
+        description,
+        moderator_id,
+        duration_seconds,
+        main_picture_url,
+        address_id,
+        street,
+        zipcode,
+        city,
+        firstname,
+        lastname,
+        email,
+        phone_number,
+        bio,
+        role,
+        photo_url,
+        website_url,
+        facebook_url,
+        twitter_url,
+        instagram_url,
+        name,
+        vigneron,
+        cepage,
+        arome,
+        sommelier,
+        image,
+        website,
+        specificities,
+        producteur,
+      }) => ({
+        id,
+        date,
+        title,
+        price,
+        availabilities,
+        description,
+        moderator_id,
+        duration_seconds,
+        main_picture_url,
+        address_id,
+        street,
+        zipcode,
+        city,
+        firstname,
+        lastname,
+        email,
+        phone_number,
+        bio,
+        role,
+        photo_url,
+        website_url,
+        facebook_url,
+        twitter_url,
+        instagram_url,
+        name,
+        vigneron,
+        cepage,
+        arome,
+        sommelier,
+        image,
+        website,
+        specificities,
+        producteur,
+      })
+    )
   );
 };
 
@@ -33,6 +97,7 @@ module.exports.handleCreateEvent = async (req, res) => {
     duration_seconds,
     main_picture_url,
     address_id,
+    wine_id,
   } = req.body;
   const createdUserId = await createEvent({
     date,
@@ -43,6 +108,7 @@ module.exports.handleCreateEvent = async (req, res) => {
     duration_seconds,
     main_picture_url,
     address_id,
+    wine_id,
   });
   return res.status(201).json(createdUserId);
 };
@@ -57,6 +123,7 @@ module.exports.handleUpdateEvent = async (req, res) => {
     duration_seconds,
     main_picture_url,
     address_id,
+    wine_id,
   } = req.body;
   const attributes = {
     date,
@@ -67,6 +134,7 @@ module.exports.handleUpdateEvent = async (req, res) => {
     duration_seconds,
     main_picture_url,
     address_id,
+    wine_id,
   };
   const data = await updateEvent(req.params.id, attributes);
   res.send(data);
