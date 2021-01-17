@@ -6,9 +6,9 @@ const getAllOrders = async () => {
   return db.query('SELECT * FROM order');
 };
 
-const findOrdersByUser = async () => {
- return db.query('SELECT * FROM order');
-};
+// const findOrdersByUser = async () => {
+//  return db.query('SELECT * FROM order');
+// };
 
 module.exports = {
  getAllOrders
