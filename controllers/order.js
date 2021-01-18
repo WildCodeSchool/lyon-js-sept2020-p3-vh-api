@@ -1,30 +1,28 @@
 const {
- getAllOrders,
- findOrdersByUser,
- postOneOrder,
- // updateOneOrder,
- // deleteOneOrder,
-} = require('../models/order');
+  getAllOrders,
+  findOrdersByUser,
+  findOrdersByEvent,
+  postOneOrder,
+  // updateOneOrder,
+  // deleteOneOrder,
+} = require("../models/order");
 
 module.exports.handleAllOrders = async (req, res) => {
- const rawData = await getAllOrders();
- res.send(rawData);
+  const rawData = await getAllOrders();
+  res.send(rawData);
 };
 
 module.exports.handleOrdersByUser = async (req, res) => {
- res.send(await findOrdersByUser(req.params.id));
+  res.send(await findOrdersByUser(req.params.id));
+};
+
+module.exports.handleOrdersByEvent = async (req, res) => {
+  res.send(await findOrdersByEvent(req.params.id));
 };
 
 module.exports.handleCreateOrder = async (req, res) => {
- const {
-   user_id,
-   event_id
- } = req.body;
- const data = await postOneOrder({
-  user_id,
-   event_id
- });
- return res.status(201).send(data);
+  const data = await postOneOrder(req);
+  return res.status(201).send(data);
 };
 
 // module.exports.handleUpdateOrder = async (req, res) => {
