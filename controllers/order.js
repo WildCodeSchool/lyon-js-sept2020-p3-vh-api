@@ -1,5 +1,3 @@
-/// handleAllOrder, handleOneOrder, handleOrdersByUser, handleCreateOrder, handleUpdateOrder, handleDeleteOrder
-
 const {
  getAllOrders,
  findOrdersByUser,
