@@ -16,7 +16,6 @@ const findOneOrder = async (id, failIfNotFound = true) => {
     [orderId]
   );
   if (rows.length) {
-    console.log(rows);
     return rows;
   }
   if (failIfNotFound) throw new RecordNotFoundError("event", orderId);
@@ -38,7 +37,19 @@ const postOneOrder = async (req) => {
         datasToRecord
       );
     })
-  ).then(() => findOneOrder(order_id));
+  )
+    .then(() =>
+      Promise.all(
+        req.body.map(async (item) => {
+          console.log(item.id, item.quantity);
+          await db.query(
+            `UPDATE event SET availabilities = availabilities - ? WHERE id = ?`,
+            [item.quantity, item.id]
+          );
+        })
+      )
+    )
+    .then(() => findOneOrder(order_id));
 };
 
 const findOrdersByUser = async (id, failIfNotFound = true) => {

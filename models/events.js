@@ -64,7 +64,6 @@ const deleteEvent = async (id, failIfNotFound = true) => {
 // update one event by his id
 
 const updateEvent = async (id, newAttributes) => {
-  await validate(newAttributes, { udpatedRessourceId: id });
   const namedAttributes = definedAttributesToSqlSet(newAttributes);
   return db
     .query(`UPDATE event SET ${namedAttributes} WHERE id = :id`, {
