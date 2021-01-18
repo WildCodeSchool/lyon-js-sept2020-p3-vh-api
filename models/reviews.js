@@ -2,10 +2,12 @@ const db = require('../db.js');
 const { RecordNotFoundError } = require('../error-types');
 const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js');
 
-// helpers need to be done
-
 const getOneReview = async (id, failIfNotFound = true) => {
-  const rows = await db.query('SELECT * FROM review WHERE id = ?', [id]);
+  const reviewId = id;
+  const rows = await db.query(
+    'SELECT r.rating, r.comment, r.id, e.title, u.firstname FROM review AS r JOIN event AS e ON r.event_id = e.id JOIN user AS u ON r.user_id = u.id  WHERE r.id = ?',
+    [reviewId]
+  );
   if (rows.length) {
     return rows[0];
   }
@@ -14,7 +16,9 @@ const getOneReview = async (id, failIfNotFound = true) => {
 };
 
 const getReview = async () => {
-  return db.query('SELECT * FROM review');
+  return db.query(
+    'SELECT r.rating, r.comment, r.id, e.title, u.firstname FROM review AS r JOIN event AS e ON r.event_id = e.id JOIN user AS u ON r.user_id = u.id'
+  );
 };
 
 const postReview = async (data) => {
