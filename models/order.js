@@ -41,7 +41,6 @@ const postOneOrder = async (req) => {
     .then(() =>
       Promise.all(
         req.body.map(async (item) => {
-          console.log(item.id, item.quantity);
           await db.query(
             `UPDATE event SET availabilities = availabilities - ? WHERE id = ?`,
             [item.quantity, item.id]
