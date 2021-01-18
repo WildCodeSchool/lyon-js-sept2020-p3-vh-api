@@ -3,8 +3,8 @@ const {
   findOrdersByUser,
   findOrdersByEvent,
   postOneOrder,
-  // updateOneOrder,
-  // deleteOneOrder,
+  findOneOrder,
+  deleteOneOrder,
 } = require("../models/order");
 
 module.exports.handleAllOrders = async (req, res) => {
@@ -25,20 +25,11 @@ module.exports.handleCreateOrder = async (req, res) => {
   return res.status(201).send(data);
 };
 
-// module.exports.handleUpdateOrder = async (req, res) => {
-//  const {
-//   user_id,
-//   event_id
-//  } = req.body;
-//  const attribute = {
-//   user_id,
-//   event_id
-//  };
-//  const data = await updateOneOrder(req.params.id, attribute);
-//  res.send(data);
-// };
+module.exports.handleOneOrder = async (req, res) => {
+  res.send(await findOneOrder(req.params.id));
+};
 
-// module.exports.handleDeleteOrder = async (req, res) => {
-//  await deleteOneOrder(req.params.id);
-//  res.sendStatus(204);
-// };
+module.exports.handleDeleteOrder = async (req, res) => {
+  await deleteOneOrder(req.params.id);
+  res.sendStatus(204);
+};
