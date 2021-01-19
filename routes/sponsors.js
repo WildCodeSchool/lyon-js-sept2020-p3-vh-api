@@ -7,6 +7,8 @@ const requireRequestBody = require('../middlewares/requireRequestBody.js');
 
 router.get('/', asyncHandler(Sponsor.handleAllSponsor));
 
+router.get('/:id', asyncHandler(Sponsor.handleOneSponsor));
+
 router.post(
   '/',
   requireRequestBody,
