@@ -33,6 +33,7 @@ const putOneWine = async (id, formData) => {
     })
     .then(() => findById(id));
 };
+
 const deleteOneWine = async (id) => {
   await db.query('DELETE FROM wine WHERE id = ?', id);
 };
