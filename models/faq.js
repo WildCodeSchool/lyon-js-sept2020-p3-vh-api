@@ -7,7 +7,7 @@ const getAllQuestions = async () => {
 };
 
 const findQuestionById = async (id, failIfNotFound = true) => {
-  const rows = await db.query('SELECT * FROM faq WHERE faq_id = ?', [id]);
+  const rows = await db.query('SELECT * FROM faq WHERE id = ?', [id]);
   if (rows.length) {
     return rows[0];
   }
@@ -27,14 +27,14 @@ const postOneQuestion = async (formData) => {
 const putOneQuestion = async (id, formData) => {
   const attribute = definedAttributesToSqlSet(formData);
   return db
-    .query(`UPDATE faq SET ${attribute} WHERE faq_id = :id`, {
+    .query(`UPDATE faq SET ${attribute} WHERE id = :id`, {
       ...formData,
       id,
     })
     .then(() => findQuestionById(id));
 };
 const deleteOneQuestion = async (id) => {
-  await db.query('DELETE FROM faq WHERE faq_id = ?', id);
+  await db.query('DELETE FROM faq WHERE id = ?', id);
 };
 
 module.exports = {
