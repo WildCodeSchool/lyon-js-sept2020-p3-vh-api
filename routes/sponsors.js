@@ -5,7 +5,6 @@ const Sponsor = require('../controllers/sponsors.js');
 const requireRequestBody = require('../middlewares/requireRequestBody.js');
 const handleImageUpload = require('../middlewares/handleImageUpload');
 
-
 router.get('/', asyncHandler(Sponsor.handleAllSponsor));
 
 router.post(

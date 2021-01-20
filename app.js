@@ -4,6 +4,8 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const session = require('express-session');
 const sessionStore = require('./sessionStore')
+
+
 const {
   inTestEnv,
   inProdEnv,
@@ -47,10 +49,10 @@ const corsOptions = {
   credentials: true,
 };
 
+app.use(express.urlencoded({extended: true}))
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(':/file-storage', express.static('file-storage'))
+app.use(':/file-storage/public', express.static('file-storage/public'))
 app.use(
   session({
     key: SESSION_COOKIE_NAME,
