@@ -152,6 +152,13 @@ const updateEvent = async (id, newAttributes) => {
     .then(() => findOneEvent(id));
 };
 
+// setInterval(async () => {
+//   const rows = await db.query(
+//     "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE e.date BETWEEN NOW() AND DATEADD(DD, +2, NOW())"
+//   );
+//   console.log(rows);
+// }, 3000);
+
 module.exports = {
   findAllEvents,
   createEvent,
