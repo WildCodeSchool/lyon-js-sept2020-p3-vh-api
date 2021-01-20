@@ -4,7 +4,7 @@ const {
   updateSponsor,
   deleteSponsor,
   findOne,
-} = require("../models/sponsors");
+} = require('../models/sponsors');
 
 module.exports.handleOneSponsor = async (req, res) => {
   const data = await findOne(req.params.id);

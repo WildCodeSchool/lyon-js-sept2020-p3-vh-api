@@ -1,6 +1,15 @@
 const db = require('../db.js');
 const { RecordNotFoundError } = require('../error-types');
 
+const findOne = async (id, failIfNotFound = true) => {
+  const rows = await db.query(`SELECT * FROM carrousel WHERE id = ?`, [id]);
+  if (rows.length) {
+    return rows[0];
+  }
+  if (failIfNotFound) throw new RecordNotFoundError('carrousel', id);
+  return null;
+};
+
 const findById = async (id, failIfNotFound = true) => {
   const rows = await db.query('SELECT * FROM carrousel WHERE id = ?', [id]);
   if (rows.length) {
@@ -29,4 +38,4 @@ const deletePhoto = async (req) => {
   return db.query('DELETE FROM carrousel WHERE id= ?', [photoId]);
 };
 
-module.exports = { getPhoto, postPhoto, deletePhoto };
+module.exports = { findOne, findById, getPhoto, postPhoto, deletePhoto };

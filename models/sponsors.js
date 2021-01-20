@@ -1,19 +1,19 @@
 // const Joi = require('joi');
-const db = require("../db.js");
-const { RecordNotFoundError } = require("../error-types");
-const definedAttributesToSqlSet = require("../helpers/definedAttributesToSQLSet.js");
+const db = require('../db.js');
+const { RecordNotFoundError } = require('../error-types');
+const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js');
 
 const findOne = async (id, failIfNotFound = true) => {
-    const rows = await db.query(`SELECT * FROM sponsors WHERE id = ?`, [id]);
-    if (rows.length) {
-      return rows[0];
-    }
-    if (failIfNotFound) throw new RecordNotFoundError('sponsors', id);
-    return null;
-  };
+  const rows = await db.query(`SELECT * FROM sponsors WHERE id = ?`, [id]);
+  if (rows.length) {
+    return rows[0];
+  }
+  if (failIfNotFound) throw new RecordNotFoundError('sponsors', id);
+  return null;
+};
 
 const findById = async (id, failIfNotFound = true) => {
-  const rows = await db.query("SELECT * FROM sponsors WHERE id = ?", [id]);
+  const rows = await db.query('SELECT * FROM sponsors WHERE id = ?', [id]);
   if (rows.length) {
     return rows[0];
   }
@@ -22,7 +22,7 @@ const findById = async (id, failIfNotFound = true) => {
 };
 
 const findSponsor = async () => {
-  const rows = await db.query("SELECT * FROM sponsors");
+  const rows = await db.query('SELECT * FROM sponsors');
   if (rows.lenght === 0) {
     return null;
   }
@@ -47,11 +47,11 @@ const updateSponsor = async (id, newAttributes) => {
 };
 
 const deleteSponsor = async (id, failIfNotFound = true) => {
-  const res = await db.query("DELETE FROM sponsors WHERE id = ?", [id]);
+  const res = await db.query('DELETE FROM sponsors WHERE id = ?', [id]);
   if (res.affectedRows !== 0) {
     return true;
   }
-  if (failIfNotFound) throw new RecordNotFoundError("sponsors", id);
+  if (failIfNotFound) throw new RecordNotFoundError('sponsors', id);
   return false;
 };
 
@@ -61,5 +61,5 @@ module.exports = {
   updateSponsor,
   deleteSponsor,
   findOne,
-  findById
+  findById,
 };
