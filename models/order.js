@@ -35,9 +35,11 @@ const sendMail = async (id) => {
   const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
   const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
-  sendSmtpEmail.subject = "Merci pour votre commande !";
+  sendSmtpEmail.subject = "Merci pour votre commande sur Hypnose & Vins!";
   sendSmtpEmail.htmlContent = `<html>
-  <body><h1>Merci pour votre commande, voici son récapitulatif : </h1>
+  <body><h1>Bonjour ${
+    datasToSend[0].firstname
+  } et merci pour votre commande, voici son récapitulatif : </h1>
   <table style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black;text-align:center">
     <thead>
       <tr>
@@ -85,15 +87,17 @@ const sendMail = async (id) => {
     </tbody>
   </table>
   <p>Numéro de commande : ${datasToSend[0].order_id}</p>
+  <p>Merci pour votre confiance, à bientôt</p>
+  <p>Morgane Pardo, Hypnose & Vins</p>
   </body></html>`;
   sendSmtpEmail.sender = {
-    name: `Morgane Pardo`,
+    name: `Hypnose & Vins`,
     email: "morgane.pardo@yahoo.com",
   };
   sendSmtpEmail.to = [{ email: customerEmail }];
   sendSmtpEmail.replyTo = {
     email: "morgane.pardo@yahoo.com",
-    name: `Morgane Pardo`,
+    name: `Hypnose & Vins`,
   };
 
   try {
@@ -103,6 +107,82 @@ const sendMail = async (id) => {
     console.error(err);
   }
 };
+
+const sendReminderMail = (datas) =>
+  datas.map((order) => {
+    const customerEmail = order.email;
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    const apiKey = defaultClient.authentications["api-key"];
+    apiKey.apiKey = SENDINBLUE_API_KEY;
+
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+    sendSmtpEmail.subject =
+      "Vous participez prochainement à un évènement Hypnose & Vins";
+    sendSmtpEmail.htmlContent = `<html>
+  <body><h2>Bonjour ${
+    order.firstname
+  }, voici le récapitulatif de vos évènements à venir : </h2>
+  <table style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black;text-align:center">
+    <thead>
+      <tr>
+        <th style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">Evénement</th>
+        <th style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">Adresse</th>
+        <th style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">Date</th>
+        <th style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">Places réservées</th>
+        <th style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">Prix unitaire</th>
+        <th style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">Prix total</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+    <td style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">${
+      order.title
+    }</td>
+    <td style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">${
+      order.street
+    } ${order.zipcode} ${order.city}</td>
+    <td style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">${moment(
+      order.date
+    ).format("DD-MM-YYYY")}</td>
+    <td style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">${
+      order.event_quantity
+    }</td>
+    <td style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">${Math.round(
+      order.price
+    )} €</td>
+    <td style="border-collapse:collapse;border-style:solid;border-width:1px;border-color:black">${
+      order.price * order.event_quantity
+    } €</td>
+  </tr>
+    </tbody>
+  </table>
+  <p>Numéro de commande : ${order.order_id}</p>
+  <p>Merci pour votre confiance, à bientôt</p>
+  <p>Morgane Pardo, Hypnose & Vins</p>
+  </body></html>
+`;
+
+    sendSmtpEmail.sender = {
+      name: `Hypnose & Vins`,
+      email: "morgane.pardo@yahoo.com",
+    };
+    sendSmtpEmail.to = [{ email: customerEmail }];
+    sendSmtpEmail.replyTo = {
+      email: "morgane.pardo@yahoo.com",
+      name: `Hypnose & Vins`,
+    };
+
+    try {
+      apiInstance.sendTransacEmail(sendSmtpEmail);
+      return;
+    } catch (err) {
+      console.error(err);
+    }
+    // eslint-disable-next-line consistent-return
+    return null;
+  });
 
 const postOneOrder = async (req) => {
   const order_id = uuidv4();
@@ -166,6 +246,26 @@ const deleteOneOrder = async (id, failIfNotFound = true) => {
   if (failIfNotFound) throw new RecordNotFoundError("event", id);
   return false;
 };
+
+const updatereminderMailField = async (datas) => {
+  datas.map((event) =>
+    db.query("UPDATE `order` SET reminder_mail = 1 WHERE id = ?", [
+      event.line_id,
+    ])
+  );
+};
+
+setInterval(async () => {
+  const datePlusTwoDays = new Date();
+  datePlusTwoDays.setDate(datePlusTwoDays.getDate() + 2);
+
+  const rows = await db.query(
+    "SELECT o.id as line_id, o.order_id, u.id as user_id, u.firstname, u.lastname, u.email, e.id as event_id, e.title as event_title, o.event_quantity, e.title, e.price, e.date, a.street, a.zipcode, a.city FROM `order` as o JOIN user AS u ON o.user_id = u.id JOIN event AS e ON o.event_id = e.id JOIN address AS a on a.id = e.address_id WHERE e.date BETWEEN NOW() AND ? AND o.reminder_mail = false",
+    [datePlusTwoDays]
+  );
+  await sendReminderMail(rows);
+  await updatereminderMailField(rows);
+}, 30000);
 
 module.exports = {
   getAllOrders,
