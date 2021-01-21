@@ -7,7 +7,7 @@ const {
 } = require('../models/events');
 
 module.exports.handleAllEvents = async (req, res) => {
-  const datas = await findAllEvents();
+  const datas = await findAllEvents(req);
   res.send(
     datas.map(
       ({
