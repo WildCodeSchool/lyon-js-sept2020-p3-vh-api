@@ -7,6 +7,8 @@ const handleImageUpload = require('../middlewares/handleImageUpload');
 
 router.get('/', asyncHandler(Sponsor.handleAllSponsor));
 
+router.get('/:id', asyncHandler(Sponsor.handleOneSponsor));
+
 router.post(
   '/',
   handleImageUpload,

@@ -29,8 +29,6 @@ const findSponsor = async () => {
   return rows;
 };
 
-// const createSponsor = async (req) => {
-//     const { name, image } = req.body;
 const createSponsor = async (datas) => {
   const { name, image } = datas;
   return db
@@ -49,12 +47,19 @@ const updateSponsor = async (id, newAttributes) => {
 };
 
 const deleteSponsor = async (id, failIfNotFound = true) => {
-  const res = await db.query("DELETE FROM sponsors WHERE id = ?", [id]);
+  const res = await db.query('DELETE FROM sponsors WHERE id = ?', [id]);
   if (res.affectedRows !== 0) {
     return true;
   }
-  if (failIfNotFound) throw new RecordNotFoundError("sponsors", id);
+  if (failIfNotFound) throw new RecordNotFoundError('sponsors', id);
   return false;
 };
 
-module.exports = { findSponsor, createSponsor, updateSponsor, deleteSponsor };
+module.exports = {
+  findSponsor,
+  createSponsor,
+  updateSponsor,
+  deleteSponsor,
+  findOne,
+  findById,
+};
