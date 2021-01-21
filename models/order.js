@@ -265,7 +265,7 @@ setInterval(async () => {
   );
   await sendReminderMail(rows);
   await updatereminderMailField(rows);
-}, 30000);
+}, 3600000);
 
 module.exports = {
   getAllOrders,
