@@ -1,7 +1,7 @@
-const Joi = require('joi').extend(require('@joi/date'));
-const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js');
-const { ValidationError, RecordNotFoundError } = require('../error-types');
-const db = require('../db.js');
+const Joi = require("joi").extend(require("@joi/date"));
+const definedAttributesToSqlSet = require("../helpers/definedAttributesToSQLSet.js");
+const { ValidationError, RecordNotFoundError } = require("../error-types");
+const db = require("../db.js");
 
 // validate datas on update or create
 const validate = async (attributes, options = { udpatedRessourceId: null }) => {
@@ -62,9 +62,6 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
           number: "La durée n'est pas valide",
           integer: "La durée n'est pas valide",
         }),
-    main_picture_url: Joi.string().max(255).messages({
-      'string.max': "Le lien de l'image dépasse la limite de 255 caractères",
-    }),
     address_id: forUpdate
       ? Joi.number().integer().messages({
           number: "L'adresse n'est pas valide",
@@ -93,8 +90,8 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
     throw new ValidationError([
       {
         message: error.details.map((err) => err.message),
-        path: ['joi'],
-        type: 'unique',
+        path: ["joi"],
+        type: "unique",
       },
     ]);
 };
@@ -105,14 +102,14 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
 const findOneEvent = async (id, failIfNotFound = true) => {
   const eventId = id;
   const rows = await db.query(
-    'SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE e.id=?',
+    "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE e.id=?",
     [eventId]
   );
   if (rows.length) {
     delete rows[0].encrypted_password;
     return rows[0];
   }
-  if (failIfNotFound) throw new RecordNotFoundError('event', eventId);
+  if (failIfNotFound) throw new RecordNotFoundError("event", eventId);
   return null;
 };
 
@@ -121,13 +118,13 @@ const findAllEvents = async (req) => {
   console.log(req.query);
   if (req.query.before && req.query.after) {
     return db.query(
-      'SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE date BETWEEN ? AND ?',
+      "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE date BETWEEN ? AND ?",
       [req.query.after, req.query.before]
     );
   }
 
   return db.query(
-    'SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id'
+    "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id"
   );
 };
 
@@ -141,11 +138,11 @@ const createEvent = async (datas) => {
 
 // delete one event by his Id
 const deleteEvent = async (id, failIfNotFound = true) => {
-  const res = await db.query('DELETE FROM event WHERE id=?', [id]);
+  const res = await db.query("DELETE FROM event WHERE id=?", [id]);
   if (res.affectedRows !== 0) {
     return true;
   }
-  if (failIfNotFound) throw new RecordNotFoundError('event', id);
+  if (failIfNotFound) throw new RecordNotFoundError("event", id);
   return false;
 };
 // update one event by his id
