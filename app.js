@@ -4,6 +4,8 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const session = require('express-session');
 const sessionStore = require('./sessionStore')
+
+
 const {
   inTestEnv,
   inProdEnv,
@@ -30,12 +32,7 @@ if (!inTestEnv && !inProdEnv) {
 
 // middlewares
 
-let allowedOrigins;
-
-if(CORS_ALLOWED_ORIGINS){
-  allowedOrigins = CORS_ALLOWED_ORIGINS.split(','); 
-}
-
+const allowedOrigins = CORS_ALLOWED_ORIGINS.split(','); 
 const corsOptions = {
   origin: (origin, callback) => {
     if (origin === undefined || allowedOrigins.indexOf(origin) !== -1) {
@@ -47,9 +44,10 @@ const corsOptions = {
   credentials: true,
 };
 
+app.use(express.urlencoded({extended: true}))
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use('/file-storage/public', express.static('file-storage/public'))
 app.use(
   session({
     key: SESSION_COOKIE_NAME,

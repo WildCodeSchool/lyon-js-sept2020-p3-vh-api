@@ -1,4 +1,14 @@
-const { getPhoto, postPhoto, deletePhoto } = require('../models/carrousel');
+const {
+  getPhoto,
+  postPhoto,
+  deletePhoto,
+  findOne,
+} = require('../models/carrousel');
+
+module.exports.handleOneCarrousel = async (req, res) => {
+  const data = await findOne(req.params.id);
+  res.status(200).send(data);
+};
 
 module.exports.handleCarrouselGet = async (req, res) => {
   const rawData = await getPhoto(req);
