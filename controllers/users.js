@@ -24,7 +24,39 @@ module.exports.handleAllAnimators = async (req, res) => {
 
 module.exports.handleAllUsers = async (req, res) => {
   const datas = await findAll();
-  res.send(datas.map(({ id, email, role }) => ({ id, email, role })));
+  res.send(
+    datas.map(
+      ({
+        id,
+        firstname,
+        lastname,
+        email,
+        password,
+        password_confirmation,
+        phone: phone_number,
+        photo_url,
+        bio,
+        role,
+        instagram_url,
+        facebook_url,
+        twitter_url,
+      }) => ({
+        id,
+        firstname,
+        lastname,
+        email,
+        password,
+        password_confirmation,
+        phone: phone_number,
+        photo_url,
+        bio,
+        role,
+        instagram_url,
+        facebook_url,
+        twitter_url,
+      })
+    )
+  );
 };
 
 module.exports.handleAnUser = async (req, res) => {
