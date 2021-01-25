@@ -4,7 +4,7 @@ const {
   createEvent,
   updateEvent,
   deleteEvent,
-} = require('../models/events');
+} = require("../models/events");
 
 module.exports.handleAllEvents = async (req, res) => {
   const datas = await findAllEvents(req);
@@ -88,6 +88,8 @@ module.exports.handleAnEvent = async (req, res) => {
 };
 
 module.exports.handleCreateEvent = async (req, res) => {
+  const image = req.file ? req.file.path : null;
+  console.log(req.file);
   const {
     date,
     title,
@@ -95,7 +97,6 @@ module.exports.handleCreateEvent = async (req, res) => {
     description,
     moderator_id,
     duration_seconds,
-    main_picture_url,
     address_id,
     wine_id,
   } = req.body;
@@ -106,7 +107,7 @@ module.exports.handleCreateEvent = async (req, res) => {
     description,
     moderator_id,
     duration_seconds,
-    main_picture_url,
+    main_picture_url: image,
     address_id,
     wine_id,
   });
@@ -114,6 +115,7 @@ module.exports.handleCreateEvent = async (req, res) => {
 };
 
 module.exports.handleUpdateEvent = async (req, res) => {
+  const image = req.file ? req.file.path : null;
   const {
     date,
     title,
@@ -121,7 +123,6 @@ module.exports.handleUpdateEvent = async (req, res) => {
     description,
     moderator_id,
     duration_seconds,
-    main_picture_url,
     address_id,
     wine_id,
   } = req.body;
@@ -132,7 +133,7 @@ module.exports.handleUpdateEvent = async (req, res) => {
     description,
     moderator_id,
     duration_seconds,
-    main_picture_url,
+    main_picture_url: image,
     address_id,
     wine_id,
   };

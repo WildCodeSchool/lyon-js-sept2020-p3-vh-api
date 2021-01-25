@@ -72,6 +72,9 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
           number: "L'adresse n'est pas valide",
           integer: "L'adresse n'est pas valide",
         }),
+    main_picture_url: Joi.string().max(255).messages({
+      "string.max": "Le lien de l'image dépasse la limite de 255 caractères",
+    }),
     wine_id: forUpdate
       ? Joi.number().integer().messages({
           number: "Le vin n'est pas valide",
