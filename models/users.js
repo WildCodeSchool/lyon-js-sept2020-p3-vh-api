@@ -14,7 +14,6 @@ const findOne = async (id, failIfNotFound = true) => {
   const rows = await db.query("SELECT * FROM user WHERE id=?", [userId]);
   if (rows.length) {
     delete rows[0].encrypted_password;
-    console.log(rows);
     return rows[0];
   }
   if (failIfNotFound) throw new RecordNotFoundError("users", userId);
@@ -117,7 +116,8 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
         }),
     bio: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
     role: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
-    photo_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
+    photo_url: forUpdate ? Joi.string().allow(null) : Joi.string().allow(null),
+    website_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
     instagram_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
     facebook_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
     twitter_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),

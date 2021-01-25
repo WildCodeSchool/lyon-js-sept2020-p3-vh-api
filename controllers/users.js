@@ -37,6 +37,7 @@ module.exports.handleAllUsers = async (req, res) => {
         photo_url,
         bio,
         role,
+        website_url,
         instagram_url,
         facebook_url,
         twitter_url,
@@ -51,6 +52,7 @@ module.exports.handleAllUsers = async (req, res) => {
         photo_url,
         bio,
         role,
+        website_url,
         instagram_url,
         facebook_url,
         twitter_url,
@@ -64,7 +66,7 @@ module.exports.handleAnUser = async (req, res) => {
 };
 
 module.exports.handleOneUserCreation = async (req, res) => {
-  console.log(req.body);
+  const image = req.file ? req.file.path : null;
   const {
     firstname,
     lastname,
@@ -72,7 +74,6 @@ module.exports.handleOneUserCreation = async (req, res) => {
     password,
     password_confirmation,
     phone: phone_number,
-    photo_url,
     bio,
     role,
     instagram_url,
@@ -86,7 +87,7 @@ module.exports.handleOneUserCreation = async (req, res) => {
     password,
     password_confirmation,
     phone_number,
-    photo_url,
+    photo_url: image,
     bio,
     role,
     instagram_url,
@@ -102,21 +103,35 @@ module.exports.handleOneUserDeletion = async (req, res) => {
 };
 
 module.exports.handleOneUserUpdate = async (req, res) => {
+  const image = req.file ? req.file.path : null;
   const {
     firstname,
     lastname,
-    phone_number,
+    email,
     password,
     password_confirmation,
-    email,
+    phone_number,
+    bio,
+    role,
+    instagram_url,
+    facebook_url,
+    twitter_url,
+    website_url
   } = req.body;
   const attributes = {
     firstname,
     lastname,
-    phone_number,
+    email,
     password,
     password_confirmation,
-    email,
+    phone_number,
+    photo_url: image,
+    bio,
+    role,
+    website_url,
+    instagram_url,
+    facebook_url,
+    twitter_url,
   };
   const data = await updateUser(req.params.id, attributes);
   res.send(data);

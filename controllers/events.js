@@ -89,7 +89,6 @@ module.exports.handleAnEvent = async (req, res) => {
 
 module.exports.handleCreateEvent = async (req, res) => {
   const image = req.file ? req.file.path : null;
-  console.log(req.file);
   const {
     date,
     title,

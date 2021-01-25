@@ -118,7 +118,6 @@ const findOneEvent = async (id, failIfNotFound = true) => {
 
 // find all events in database
 const findAllEvents = async (req) => {
-  console.log(req.query);
   if (req.query.before && req.query.after) {
     return db.query(
       "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE date BETWEEN ? AND ?",
