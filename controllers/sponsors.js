@@ -17,7 +17,9 @@ module.exports.handleAllSponsor = async (req, res) => {
 };
 
 module.exports.handleCreateSponsor = async (req, res) => {
-  const data = await createSponsor(req);
+  const { name } = req.body;
+  const image = req.file ? req.file.path : null;
+  const data = await createSponsor({ name, image });
   return res.status(201).send(data);
 };
 
