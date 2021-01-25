@@ -8,19 +8,30 @@ const { SENDINBLUE_API_KEY } = require("../env");
 
 const getAllOrders = async () => {
   return db.query(
-    "SELECT o.order_id, u.id as user_id, u.firstname, u.lastname, u.email, e.id as event_id, o.event_quantity, e.title, e.price  FROM `order` as o JOIN user AS u ON o.user_id = u.id JOIN event as e ON o.event_id = e.id"
+    "SELECT o.id, o.order_id, u.id as user_id, u.firstname, u.lastname, u.email, e.id as event_id, o.event_quantity, e.title, e.price  FROM `order` as o JOIN user AS u ON o.user_id = u.id JOIN event as e ON o.event_id = e.id"
   );
 };
 
 const findOneOrder = async (id, failIfNotFound = true) => {
   const orderId = id;
-  const rows = await db.query(
-    "SELECT o.order_id, u.id as user_id, u.firstname, u.lastname, u.email, e.id as event_id, e.title as event_title, o.event_quantity, e.title, e.price, e.date, a.street, a.zipcode, a.city FROM `order` as o JOIN user AS u ON o.user_id = u.id JOIN event AS e ON o.event_id = e.id JOIN address AS a on a.id = e.address_id WHERE order_id=?",
+  let rows = [];
+  if (orderId.length > 10) {
+    rows = await db.query(
+      "SELECT o.id, o.order_id, u.id as user_id, u.firstname, u.lastname, u.email, e.id as event_id, e.title as event_title, o.event_quantity, e.title, e.price, e.date, a.street, a.zipcode, a.city FROM `order` as o JOIN user AS u ON o.user_id = u.id JOIN event AS e ON o.event_id = e.id JOIN address AS a on a.id = e.address_id WHERE order_id=?",
+      [orderId]
+    );
+    if (rows.length) {
+      return rows;
+    }
+  }
+  rows = await db.query(
+    "SELECT o.id, o.order_id, u.id as user_id, u.firstname, u.lastname, u.email, e.id as event_id, e.title as event_title, o.event_quantity, e.title, e.price, e.date, a.street, a.zipcode, a.city FROM `order` as o JOIN user AS u ON o.user_id = u.id JOIN event AS e ON o.event_id = e.id JOIN address AS a on a.id = e.address_id WHERE o.id=?",
     [orderId]
   );
   if (rows.length) {
-    return rows;
+    return rows[0];
   }
+
   if (failIfNotFound) throw new RecordNotFoundError("event", orderId);
   return null;
 };
@@ -239,7 +250,7 @@ const findOrdersByEvent = async (id, failIfNotFound = true) => {
 };
 
 const deleteOneOrder = async (id, failIfNotFound = true) => {
-  const res = await db.query("DELETE FROM `order` WHERE order_id=?", [id]);
+  const res = await db.query("DELETE FROM `order` WHERE id=?", [id]);
   if (res.affectedRows !== 0) {
     return true;
   }
