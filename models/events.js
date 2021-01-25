@@ -105,7 +105,7 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
 const findOneEvent = async (id, failIfNotFound = true) => {
   const eventId = id;
   const rows = await db.query(
-    "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE e.id=?",
+    "SELECT e.*, w.name, w.vigneron, w.producteur, w.image AS wine_image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE e.id=?",
     [eventId]
   );
   if (rows.length) {

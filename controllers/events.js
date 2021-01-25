@@ -1,3 +1,4 @@
+const moment = require("moment");
 const {
   findAllEvents,
   findOneEvent,
@@ -40,7 +41,7 @@ module.exports.handleAllEvents = async (req, res) => {
         cepage,
         arome,
         sommelier,
-        image,
+        image: wine_image,
         website,
         specificities,
         producteur,
@@ -74,7 +75,7 @@ module.exports.handleAllEvents = async (req, res) => {
         cepage,
         arome,
         sommelier,
-        image,
+        wine_image,
         website,
         specificities,
         producteur,
@@ -126,7 +127,7 @@ module.exports.handleUpdateEvent = async (req, res) => {
     wine_id,
   } = req.body;
   const attributes = {
-    date,
+    date: moment(date).format("YYYY-MM-DD"),
     title,
     price,
     description,
