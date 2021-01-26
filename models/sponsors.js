@@ -1,7 +1,6 @@
 // const Joi = require('joi');
 const db = require("../db.js");
 const { RecordNotFoundError } = require("../error-types");
-const definedAttributesToSqlSet = require("../helpers/definedAttributesToSQLSet.js");
 
 const findOne = async (id, failIfNotFound = true) => {
   const rows = await db.query(`SELECT * FROM sponsors WHERE id = ?`, [id]);
