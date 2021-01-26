@@ -103,7 +103,6 @@ module.exports.handleOneUserDeletion = async (req, res) => {
 };
 
 module.exports.handleOneUserUpdate = async (req, res) => {
-  const image = req.file ? req.file.path : null;
   const {
     firstname,
     lastname,
@@ -116,8 +115,10 @@ module.exports.handleOneUserUpdate = async (req, res) => {
     instagram_url,
     facebook_url,
     twitter_url,
-    website_url
+    website_url,
+    photo_url,
   } = req.body;
+  const image = req.file ? req.file.path : photo_url;
   const attributes = {
     firstname,
     lastname,

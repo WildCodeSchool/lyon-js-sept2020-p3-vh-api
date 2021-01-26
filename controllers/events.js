@@ -101,7 +101,7 @@ module.exports.handleCreateEvent = async (req, res) => {
     wine_id,
   } = req.body;
   const createdUserId = await createEvent({
-    date,
+    date: moment(date).format("YYYY-MM-DD"),
     title,
     price,
     description,
@@ -115,8 +115,8 @@ module.exports.handleCreateEvent = async (req, res) => {
 };
 
 module.exports.handleUpdateEvent = async (req, res) => {
-  const image = req.file ? req.file.path : null;
   const {
+    main_picture_url,
     date,
     title,
     price,
@@ -125,7 +125,9 @@ module.exports.handleUpdateEvent = async (req, res) => {
     duration_seconds,
     address_id,
     wine_id,
+    availabilities,
   } = req.body;
+  const image = req.file ? req.file.path : main_picture_url;
   const attributes = {
     date: moment(date).format("YYYY-MM-DD"),
     title,
@@ -136,6 +138,7 @@ module.exports.handleUpdateEvent = async (req, res) => {
     main_picture_url: image,
     address_id,
     wine_id,
+    availabilities,
   };
   const data = await updateEvent(req.params.id, attributes);
   res.send(data);
