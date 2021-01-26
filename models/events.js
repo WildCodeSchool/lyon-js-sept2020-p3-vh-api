@@ -132,7 +132,6 @@ const findAllEvents = async (req) => {
 
 // create an event
 const createEvent = async (datas) => {
-  console.log(datas);
   await validate(datas);
   return db
     .query(`INSERT INTO event SET ${definedAttributesToSqlSet(datas)}`, datas)
