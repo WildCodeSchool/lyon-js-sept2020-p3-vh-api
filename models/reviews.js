@@ -17,7 +17,7 @@ const getOneReview = async (id, failIfNotFound = true) => {
 
 const getReview = async () => {
   return db.query(
-    'SELECT r.rating, r.comment, r.id, e.title, u.firstname FROM review AS r JOIN event AS e ON r.event_id = e.id JOIN user AS u ON r.user_id = u.id'
+    'SELECT r.rating, r.comment, r.id, r.created_at, e.title, u.firstname, u.lastname, u.photo_url, u.facebook_url FROM review AS r JOIN event AS e ON r.event_id = e.id JOIN user AS u ON r.user_id = u.id'
   );
 };
 
