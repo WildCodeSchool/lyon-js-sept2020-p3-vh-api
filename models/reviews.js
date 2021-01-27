@@ -21,6 +21,13 @@ const getReview = async () => {
   );
 };
 
+const getReviewPerUserPerEvent = async (userId, eventId) => {
+  return db.query(
+    'SELECT r.rating, r.comment, r.id, e.title, u.firstname FROM review AS r JOIN event AS e ON r.event_id = e.id JOIN user AS u ON r.user_id = u.id WHERE r.user_id=? AND r.event_id=?',
+    [userId, eventId]
+  );
+};
+
 const postReview = async (data) => {
   return db
     .query(`INSERT INTO review SET ${definedAttributesToSqlSet(data)}`, data)
@@ -32,4 +39,10 @@ const deleteReview = async (req) => {
   return db.query('DELETE FROM review WHERE id = ?', [reviewId]);
 };
 
-module.exports = { getReview, getOneReview, postReview, deleteReview };
+module.exports = {
+  getReview,
+  getOneReview,
+  postReview,
+  deleteReview,
+  getReviewPerUserPerEvent,
+};
