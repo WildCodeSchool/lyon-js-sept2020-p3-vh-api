@@ -4,7 +4,7 @@ const {
   postOneWine,
   putOneWine,
   deleteOneWine,
-} = require('../models/wine');
+} = require("../models/wine");
 
 module.exports.handleWineGetAll = async (req, res) => {
   const rawData = await getAllWine();
@@ -16,6 +16,7 @@ module.exports.handleWineGetOne = async (req, res) => {
 };
 
 module.exports.handleWinePost = async (req, res) => {
+  const image = req.file ? req.file.path : null;
   const {
     name,
     vigneron,
@@ -23,7 +24,6 @@ module.exports.handleWinePost = async (req, res) => {
     arome,
     price,
     sommelier,
-    image,
     website,
     specificities,
     producteur,
@@ -51,11 +51,16 @@ module.exports.handleWinePutOne = async (req, res) => {
     arome,
     price,
     sommelier,
-    image,
     website,
     specificities,
     producteur,
   } = req.body;
+  let image;
+  if (req.file) {
+    image = req.file.path;
+  } else {
+    image = req.body.image;
+  }
   const attribute = {
     name,
     vigneron,

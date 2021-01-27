@@ -23,8 +23,8 @@ const getPhoto = async () => {
   return db.query('SELECT * FROM carrousel');
 };
 
-const postPhoto = async (req) => {
-  const { name, description, image } = req.body;
+const postPhoto = async (datas) => {
+  const { name, description, image } = datas;
   return db
     .query(
       'INSERT INTO carrousel (name, description, image) VALUES (?, ?, ?)',

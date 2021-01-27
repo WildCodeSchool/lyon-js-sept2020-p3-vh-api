@@ -3,7 +3,7 @@ const {
   postPhoto,
   deletePhoto,
   findOne,
-} = require('../models/carrousel');
+} = require("../models/carrousel");
 
 module.exports.handleOneCarrousel = async (req, res) => {
   const data = await findOne(req.params.id);
@@ -16,7 +16,9 @@ module.exports.handleCarrouselGet = async (req, res) => {
 };
 
 module.exports.handleCarrouselPost = async (req, res) => {
-  const rawData = await postPhoto(req);
+  const { name, description } = req.body;
+  const image = req.file ? req.file.path : null;
+  const rawData = await postPhoto({ name, description, image });
   res.json(rawData);
 };
 
