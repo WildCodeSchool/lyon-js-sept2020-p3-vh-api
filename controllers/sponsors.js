@@ -4,7 +4,7 @@ const {
   updateSponsor,
   deleteSponsor,
   findOne,
-} = require('../models/sponsors');
+} = require("../models/sponsors");
 
 module.exports.handleOneSponsor = async (req, res) => {
   const data = await findOne(req.params.id);
@@ -17,12 +17,22 @@ module.exports.handleAllSponsor = async (req, res) => {
 };
 
 module.exports.handleCreateSponsor = async (req, res) => {
-  const data = await createSponsor(req);
+  const { name } = req.body;
+  const image = req.file ? req.file.path : null;
+  const data = await createSponsor({ name, image });
   return res.status(201).send(data);
 };
 
 module.exports.handleUpdateSponsor = async (req, res) => {
-  const data = await updateSponsor(req.params.id, req.body);
+  let image;
+  if (req.file) {
+    image = req.file.path;
+  } else {
+    image = req.body.image;
+  }
+  const { name } = req.body;
+  const { id } = req.params;
+  const data = await updateSponsor({ id, name, image });
   return res.send(data);
 };
 

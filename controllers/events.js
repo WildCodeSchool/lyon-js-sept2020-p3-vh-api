@@ -1,13 +1,14 @@
+const moment = require("moment");
 const {
   findAllEvents,
   findOneEvent,
   createEvent,
   updateEvent,
   deleteEvent,
-} = require('../models/events');
+} = require("../models/events");
 
 module.exports.handleAllEvents = async (req, res) => {
-  const datas = await findAllEvents();
+  const datas = await findAllEvents(req);
   res.send(
     datas.map(
       ({
@@ -40,7 +41,7 @@ module.exports.handleAllEvents = async (req, res) => {
         cepage,
         arome,
         sommelier,
-        image,
+        image: wine_image,
         website,
         specificities,
         producteur,
@@ -74,7 +75,7 @@ module.exports.handleAllEvents = async (req, res) => {
         cepage,
         arome,
         sommelier,
-        image,
+        wine_image,
         website,
         specificities,
         producteur,
@@ -88,6 +89,7 @@ module.exports.handleAnEvent = async (req, res) => {
 };
 
 module.exports.handleCreateEvent = async (req, res) => {
+  const image = req.file ? req.file.path : null;
   const {
     date,
     title,
@@ -95,18 +97,17 @@ module.exports.handleCreateEvent = async (req, res) => {
     description,
     moderator_id,
     duration_seconds,
-    main_picture_url,
     address_id,
     wine_id,
   } = req.body;
   const createdUserId = await createEvent({
-    date,
+    date: moment(date).format("YYYY-MM-DD"),
     title,
     price,
     description,
     moderator_id,
     duration_seconds,
-    main_picture_url,
+    main_picture_url: image,
     address_id,
     wine_id,
   });
@@ -115,26 +116,29 @@ module.exports.handleCreateEvent = async (req, res) => {
 
 module.exports.handleUpdateEvent = async (req, res) => {
   const {
+    main_picture_url,
     date,
     title,
     price,
     description,
     moderator_id,
     duration_seconds,
-    main_picture_url,
     address_id,
     wine_id,
+    availabilities,
   } = req.body;
+  const image = req.file ? req.file.path : main_picture_url;
   const attributes = {
-    date,
+    date: moment(date).format("YYYY-MM-DD"),
     title,
     price,
     description,
     moderator_id,
     duration_seconds,
-    main_picture_url,
+    main_picture_url: image,
     address_id,
     wine_id,
+    availabilities,
   };
   const data = await updateEvent(req.params.id, attributes);
   res.send(data);

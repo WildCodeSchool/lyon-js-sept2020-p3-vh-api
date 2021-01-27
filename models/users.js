@@ -90,50 +90,34 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
           }),
     email: forUpdate
       ? Joi.string().email()
-      : Joi.string()
-          .email()
-          .required()
-          .messages({
-            required: 'Email manquant',
-            'string.email': "Votre email n'est pas valide",
-          }),
+      : Joi.string().email().required().messages({
+          required: 'Email manquant',
+          'string.email': "Votre email n'est pas valide",
+        }),
     password: forUpdate
-      ? Joi.string()
-          .min(8)
-          .max(25)
-          .messages({
-            'string.min':
-              'Le mot de passe doit comprendre au moins 8 caractères',
-            'string.max':
-              'Le mot de passe doit comprendre moins de 25 caractères',
-          })
-      : Joi.string()
-          .min(8)
-          .max(25)
-          .required()
-          .messages({
-            'string.min':
-              'Le mot de passe doit comprendre au moins 8 caractères',
-            'string.max':
-              'Le mot de passe doit comprendre moins de 25 caractères',
-          }),
+      ? Joi.string().min(8).max(25).messages({
+          'string.min': 'Le mot de passe doit comprendre au moins 8 caractères',
+          'string.max':
+            'Le mot de passe doit comprendre moins de 25 caractères',
+        })
+      : Joi.string().min(8).max(25).required().messages({
+          'string.min': 'Le mot de passe doit comprendre au moins 8 caractères',
+          'string.max':
+            'Le mot de passe doit comprendre moins de 25 caractères',
+        }),
     phone_number: forUpdate
-      ? Joi.string()
-          .max(30)
-          .allow('')
-          .messages({
-            'string.max':
-              'Le numéro de téléphone ne doit pas dépasser 30 caractères',
-          })
-      : Joi.string()
-          .max(30)
-          .allow('')
-          .messages({
-            'string.max':
-              'Le numéro de téléphone ne doit pas dépasser 30 caractères',
-          }),
+      ? Joi.string().max(30).allow('').messages({
+          'string.max':
+            'Le numéro de téléphone ne doit pas dépasser 30 caractères',
+        })
+      : Joi.string().max(30).allow('').messages({
+          'string.max':
+            'Le numéro de téléphone ne doit pas dépasser 30 caractères',
+        }),
     bio: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
-    photo_url: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
+    role: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
+    photo_url: forUpdate ? Joi.allow('') : Joi.allow(''),
+    website_url: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
     instagram_url: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
     facebook_url: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
     twitter_url: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),

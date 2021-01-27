@@ -62,9 +62,6 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
           number: "La durée n'est pas valide",
           integer: "La durée n'est pas valide",
         }),
-    main_picture_url: Joi.string().max(255).messages({
-      "string.max": "Le lien de l'image dépasse la limite de 255 caractères",
-    }),
     address_id: forUpdate
       ? Joi.number().integer().messages({
           number: "L'adresse n'est pas valide",
@@ -75,6 +72,9 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
           number: "L'adresse n'est pas valide",
           integer: "L'adresse n'est pas valide",
         }),
+    main_picture_url: Joi.string().max(255).messages({
+      "string.max": "Le lien de l'image dépasse la limite de 255 caractères",
+    }),
     wine_id: forUpdate
       ? Joi.number().integer().messages({
           number: "Le vin n'est pas valide",
@@ -105,7 +105,7 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
 const findOneEvent = async (id, failIfNotFound = true) => {
   const eventId = id;
   const rows = await db.query(
-    "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE e.id=?",
+    "SELECT e.*, w.name, w.vigneron, w.producteur, w.image AS wine_image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE e.id=?",
     [eventId]
   );
   if (rows.length) {
@@ -117,7 +117,14 @@ const findOneEvent = async (id, failIfNotFound = true) => {
 };
 
 // find all events in database
-const findAllEvents = async () => {
+const findAllEvents = async (req) => {
+  if (req.query.before && req.query.after) {
+    return db.query(
+      "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id WHERE date BETWEEN ? AND ?",
+      [req.query.after, req.query.before]
+    );
+  }
+
   return db.query(
     "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id"
   );
