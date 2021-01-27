@@ -1,0 +1,1 @@
+ALTER TABLE `order`ADD reminder_mail BOOLEAN DEFAULT false;
