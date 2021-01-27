@@ -116,7 +116,7 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
         }),
     bio: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
     role: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
-    photo_url: forUpdate ? Joi.string().allow(null) : Joi.string().allow(null),
+    photo_url: forUpdate ? Joi.allow("") : Joi.allow(""),
     website_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
     instagram_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
     facebook_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
