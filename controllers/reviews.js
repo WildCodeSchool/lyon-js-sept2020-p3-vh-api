@@ -1,12 +1,21 @@
 const {
   getReview,
   getOneReview,
+  getReviewPerUserPerEvent,
   postReview,
   deleteReview,
 } = require('../models/reviews');
 
 module.exports.handleReviewGet = async (req, res) => {
-  const rawData = await getReview(req);
+  const rawData = await getReview();
+  res.json(rawData);
+};
+
+module.exports.handleReviewGetPerUserPerEvent = async (req, res) => {
+  const rawData = await getReviewPerUserPerEvent(
+    req.params.user_id,
+    req.params.event_id
+  );
   res.json(rawData);
 };
 
