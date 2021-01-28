@@ -1,15 +1,22 @@
-const asyncHandler = require('express-async-handler');
-const contactRouter = require('express').Router();
+const asyncHandler = require("express-async-handler");
+const contactRouter = require("express").Router();
 const {
   handleGetAllMessages,
   handleGetOneMessage,
   handleOneMessagePost,
   handleDeleteOneMessage,
-} = require('../controllers/contact');
+  handleSubscribeNewsLetter
+} = require("../controllers/contact");
+const requireRequestBody = require("../middlewares/requireRequestBody.js");
 
-contactRouter.get('/', asyncHandler(handleGetAllMessages));
-contactRouter.get('/:id', asyncHandler(handleGetOneMessage));
-contactRouter.post('/', asyncHandler(handleOneMessagePost));
-contactRouter.delete('/:id', asyncHandler(handleDeleteOneMessage));
+contactRouter.get("/", asyncHandler(handleGetAllMessages));
+contactRouter.get("/:id", asyncHandler(handleGetOneMessage));
+contactRouter.post(
+  "/newsletter",
+  requireRequestBody,
+  asyncHandler(handleSubscribeNewsLetter)
+);
+contactRouter.post("/", asyncHandler(handleOneMessagePost));
+contactRouter.delete("/:id", asyncHandler(handleDeleteOneMessage));
 
 module.exports = contactRouter;
