@@ -7,9 +7,14 @@ const {
   handleReviewDelete,
   handleReviewGet,
   handleReviewGetOne,
+  handleReviewGetPerUserPerEvent,
 } = require('../controllers/reviews.js');
 
 reviewsRouter.get('/', asyncHandler(handleReviewGet));
+reviewsRouter.get(
+  '/user/:user_id/event/:event_id',
+  asyncHandler(handleReviewGetPerUserPerEvent)
+);
 reviewsRouter.get('/:id', asyncHandler(handleReviewGetOne));
 reviewsRouter.post('/', requireRequestBody, asyncHandler(handleReviewPost));
 reviewsRouter.delete('/:id', asyncHandler(handleReviewDelete));
