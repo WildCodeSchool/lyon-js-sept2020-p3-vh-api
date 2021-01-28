@@ -1,3 +1,0 @@
-/* Replace with your SQL commands */
-INSERT INTO user (firstname, lastname, email, encrypted_password, bio, role) VALUES('cjenjencj', 'deznjen', 'fuzfuh.cuenr@gmail.com','','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s','animator'),
-('cjenjencj', 'deznjen', 'fuzfuh.cuenr@gmail.com','','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s','animator');
