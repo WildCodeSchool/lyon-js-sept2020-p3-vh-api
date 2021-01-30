@@ -288,9 +288,11 @@ const resetPassword = async (email) => {
 const storePassword = async (datas) => {
   const { userId, newPassword, token } = datas;
   const isUserIdExist = await findOneInForgotPassword(userId);
-  console.log(isUserIdExist);
   if (!isUserIdExist) {
-    throw new RecordNotFoundError("Invalid or expired reset token.", userId);
+    throw new RecordNotFoundError(
+      "Erreur, veuillez refaire une demande de mot de passe",
+      userId
+    );
   } else {
     const verifyTokens = await argon2.verify(
       isUserIdExist.resetPasswordToken,
@@ -303,7 +305,10 @@ const storePassword = async (datas) => {
         userId,
       ]);
     }
-    throw new RecordNotFoundError("Invalid or expired reset token.", userId);
+    throw new RecordNotFoundError(
+      "Erreur, veuillez refaire une demande de mot de passe",
+      userId
+    );
   }
 };
 
