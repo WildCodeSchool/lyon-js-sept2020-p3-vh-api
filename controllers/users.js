@@ -5,6 +5,7 @@ const {
   deleteUser,
   updateUser,
   findAllAnim,
+  resetPassword,
 } = require("../models/users.js");
 
 module.exports.handleAllAnimators = async (req, res) => {
@@ -94,6 +95,11 @@ module.exports.handleOneUserCreation = async (req, res) => {
     facebook_url,
     twitter_url,
   });
+  return res.status(201).json(createdUserId);
+};
+
+module.exports.handleResetPassword = async (req, res) => {
+  const createdUserId = await resetPassword(req.body.email);
   return res.status(201).json(createdUserId);
 };
 
