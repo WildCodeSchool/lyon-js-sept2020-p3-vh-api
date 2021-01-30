@@ -302,12 +302,12 @@ const resetPassword = async (email) => {
   if (hasAlreadyReset) {
     await db.query("DELETE FROM `forgot_password` WHERE userId = ?", [userId]);
     await db.query(
-      "INSERT INTO `forgot_password` (userId, resetPasswordToken) VALUES (?, ?)",
+      "INSERT INTO `forgot_password` (userId, reset_password_token) VALUES (?, ?)",
       [userId, hashedToken]
     );
   } else {
     await db.query(
-      "INSERT INTO `forgot_password` (userId, resetPasswordToken) VALUES (?, ?)",
+      "INSERT INTO `forgot_password` (userId, reset_password_token) VALUES (?, ?)",
       [userId, hashedToken]
     );
   }
@@ -325,11 +325,19 @@ const storePassword = async (datas) => {
     );
   } else {
     const verifyTokens = await argon2.verify(
-      isUserIdExist.resetPasswordToken,
+      isUserIdExist.reset_password_token,
       token
     );
-    if (verifyTokens) {
+    const linkHasAlreadyBeUsed = await db.query(
+      "SELECT * from forgot_password WHERE userId = ? AND is_password_modified = 0",
+      [userId]
+    );
+    if (verifyTokens && linkHasAlreadyBeUsed.length) {
       const newHashedPassword = await argon2.hash(newPassword);
+      await db.query(
+        "UPDATE forgot_password SET is_password_modified = 1 WHERE userId = ?",
+        [userId]
+      );
       return db.query("UPDATE user SET encrypted_password = ? WHERE id = ?", [
         newHashedPassword,
         userId,
