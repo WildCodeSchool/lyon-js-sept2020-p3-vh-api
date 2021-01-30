@@ -1,7 +1,7 @@
 const argon2 = require("argon2");
 const Joi = require("joi");
 const crypto = require("crypto");
-// const moment = require("moment");
+const moment = require("moment");
 const SibApiV3Sdk = require("sib-api-v3-sdk");
 const definedAttributesToSqlSet = require("../helpers/definedAttributesToSQLSet.js");
 const { ValidationError, RecordNotFoundError } = require("../error-types");
@@ -260,7 +260,7 @@ const sendLinkToResetPassword = (datas) => {
 
   sendSmtpEmail.subject = "Hypnose & Vins - Mise à jour de votre mot de passe";
   sendSmtpEmail.htmlContent = `<html><body><h2>Bonjour ${firstname}, veuillez cliquer sur le lien ci-dessous pour réinitialiser votre mot de passe</h2>
-  <a href=${CLIENT_URL}reset/${userId}/${token}>Cliquez ici</a><p>A bientôt</p><p>Morgane Pardo, Hypnose & Vins</p></body></html>`;
+  <a href=${CLIENT_URL}reset/${userId}/${token}>Cliquez ici</a><p>Attention, ce lien est valable 15 minutes.</p><p>A bientôt</p><p>Morgane Pardo, Hypnose & Vins</p></body></html>`;
   sendSmtpEmail.sender = {
     name: `Hypnose & Vins`,
     email: "hypnose.et.vin@gmail.com",
@@ -298,17 +298,17 @@ const resetPassword = async (email) => {
   const token = crypto.randomBytes(32).toString("hex");
   const hashedToken = await argon2.hash(token);
   const hasAlreadyReset = await findOneInForgotPassword(userId);
-  // const expire = moment.utc();
+  const expire = moment().add(900, "seconds").format();
   if (hasAlreadyReset) {
     await db.query("DELETE FROM `forgot_password` WHERE userId = ?", [userId]);
     await db.query(
-      "INSERT INTO `forgot_password` (userId, reset_password_token) VALUES (?, ?)",
-      [userId, hashedToken]
+      "INSERT INTO `forgot_password` (userId, reset_password_token, expire) VALUES (?, ?, ?)",
+      [userId, hashedToken, expire]
     );
   } else {
     await db.query(
-      "INSERT INTO `forgot_password` (userId, reset_password_token) VALUES (?, ?)",
-      [userId, hashedToken]
+      "INSERT INTO `forgot_password` (userId, reset_password_token, expire) VALUES (?, ?, ?)",
+      [userId, hashedToken, expire]
     );
   }
   await sendLinkToResetPassword({ email, token, userId, firstname, lastname });
@@ -332,7 +332,17 @@ const storePassword = async (datas) => {
       "SELECT * from forgot_password WHERE userId = ? AND is_password_modified = 0",
       [userId]
     );
-    if (verifyTokens && linkHasAlreadyBeUsed.length) {
+    const isTokenHasExpired = () => {
+      const { expire } = linkHasAlreadyBeUsed[0];
+      if (expire < moment().format()) {
+        throw new RecordNotFoundError(
+          "La validité du lien est dépassée, veuillez faire une autre demande",
+          userId
+        );
+      }
+      return false;
+    };
+    if (verifyTokens && linkHasAlreadyBeUsed.length && !isTokenHasExpired()) {
       const newHashedPassword = await argon2.hash(newPassword);
       await db.query(
         "UPDATE forgot_password SET is_password_modified = 1 WHERE userId = ?",
