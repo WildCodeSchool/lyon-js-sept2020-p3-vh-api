@@ -250,7 +250,7 @@ const updateUser = async (id, newAttributes) => {
 };
 
 const sendLinkToResetPassword = (datas) => {
-  const { email, token, userId, firstname, lastname } = datas;
+  const { email, token, userId, firstname } = datas;
   const defaultClient = SibApiV3Sdk.ApiClient.instance;
   const apiKey = defaultClient.authentications["api-key"];
   apiKey.apiKey = SENDINBLUE_API_KEY;
@@ -258,17 +258,17 @@ const sendLinkToResetPassword = (datas) => {
   const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
   const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
-  sendSmtpEmail.subject = "Mise à jour de votre mot de passe";
-  sendSmtpEmail.htmlContent = `<html><body><h1>Veuillez cliquer sur le lien ci-dessous pour réinitialiser votre mot de passe</h1>
-  <a href=${CLIENT_URL}reset/${userId}/${token}>Cliquez ici</a></body></html>`;
+  sendSmtpEmail.subject = "Hypnose & Vins - Mise à jour de votre mot de passe";
+  sendSmtpEmail.htmlContent = `<html><body><h2>Bonjour ${firstname}, veuillez cliquer sur le lien ci-dessous pour réinitialiser votre mot de passe</h2>
+  <a href=${CLIENT_URL}reset/${userId}/${token}>Cliquez ici</a><p>A bientôt</p><p>Morgane Pardo, Hypnose & Vins</p></body></html>`;
   sendSmtpEmail.sender = {
-    name: firstname + lastname,
+    name: `Hypnose & Vins`,
     email: "hypnose.et.vin@gmail.com",
   };
   sendSmtpEmail.to = [{ email }];
   sendSmtpEmail.replyTo = {
     email: "hypnose.et.vin@gmail.com",
-    name: firstname + lastname,
+    name: `Hypnose & Vins`,
   };
 
   try {
