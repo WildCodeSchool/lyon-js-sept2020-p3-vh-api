@@ -200,7 +200,8 @@ const findByEmail = async (email, failIfNotFound = true) => {
   if (rows.length) {
     return rows[0];
   }
-  if (failIfNotFound) throw new RecordNotFoundError();
+  if (failIfNotFound)
+    throw new RecordNotFoundError("Cette adresse mail n'existe pas", email);
   return null;
 };
 
