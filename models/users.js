@@ -164,6 +164,34 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
   }
 };
 
+const validatePasswords = async (attributes) => {
+  const schema = Joi.object().keys({
+    newPassword: Joi.string().min(8).max(25).required().messages({
+      "string.min": "Le mot de passe doit comprendre au moins 8 caractères",
+      "string.max": "Le mot de passe doit comprendre moins de 25 caractères",
+    }),
+    newPasswordConfirmation: Joi.when("password", {
+      is: Joi.string().min(8).max(30).required(),
+      then: Joi.any()
+        .equal(Joi.ref("password"))
+        .required()
+        .messages({ "any.only": "Les mots de passe ne correspondent pas" }),
+    }),
+  });
+
+  const { error } = schema.validate(attributes, {
+    abortEarly: false,
+  });
+  if (error)
+    throw new ValidationError([
+      {
+        message: error.details.map((err) => err.message),
+        path: ["joi"],
+        type: "unique",
+      },
+    ]);
+};
+
 /// / MODELS ////
 
 // find an user by his email
@@ -286,7 +314,8 @@ const resetPassword = async (email) => {
 };
 
 const storePassword = async (datas) => {
-  const { userId, newPassword, token } = datas;
+  const { userId, newPassword, newPasswordConfirmation, token } = datas;
+  await validatePasswords({ newPassword, newPasswordConfirmation });
   const isUserIdExist = await findOneInForgotPassword(userId);
   if (!isUserIdExist) {
     throw new RecordNotFoundError(
