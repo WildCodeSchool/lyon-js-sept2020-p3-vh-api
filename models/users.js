@@ -257,7 +257,7 @@ const findOneInForgotPassword = async (id) => {
     userId,
   ]);
   if (rows.length) {
-    return true;
+    return rows[0];
   }
   return false;
 };
@@ -285,6 +285,28 @@ const resetPassword = async (email) => {
   await sendLinkToResetPassword({ email, token, userId, firstname, lastname });
 };
 
+const storePassword = async (datas) => {
+  const { userId, newPassword, token } = datas;
+  const isUserIdExist = await findOneInForgotPassword(userId);
+  console.log(isUserIdExist);
+  if (!isUserIdExist) {
+    throw new RecordNotFoundError("Invalid or expired reset token.", userId);
+  } else {
+    const verifyTokens = await argon2.verify(
+      isUserIdExist.resetPasswordToken,
+      token
+    );
+    if (verifyTokens) {
+      const newHashedPassword = await argon2.hash(newPassword);
+      return db.query("UPDATE user SET encrypted_password = ? WHERE id = ?", [
+        newHashedPassword,
+        userId,
+      ]);
+    }
+    throw new RecordNotFoundError("Invalid or expired reset token.", userId);
+  }
+};
+
 module.exports = {
   createUser,
   verifyPassword,
@@ -295,4 +317,5 @@ module.exports = {
   updateUser,
   findAllAnim,
   resetPassword,
+  storePassword,
 };

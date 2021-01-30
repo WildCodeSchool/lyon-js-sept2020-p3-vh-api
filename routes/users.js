@@ -9,6 +9,7 @@ const {
   handleOneUserUpdate,
   handleAllAnimators,
   handleResetPassword,
+  handleStorePassword,
 } = require("../controllers/users");
 const handleImageUpload = require("../middlewares/handleImageUpload");
 
@@ -26,6 +27,11 @@ usersRouter.post(
   "/reset-password",
   requireRequestBody,
   asyncHandler(handleResetPassword)
+);
+usersRouter.post(
+  "/store-password",
+  requireRequestBody,
+  asyncHandler(handleStorePassword)
 );
 usersRouter.put(
   "/:id",
