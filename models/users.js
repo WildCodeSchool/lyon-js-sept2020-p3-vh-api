@@ -1,8 +1,12 @@
 const argon2 = require("argon2");
 const Joi = require("joi");
+const crypto = require("crypto");
+// const moment = require("moment");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 const definedAttributesToSqlSet = require("../helpers/definedAttributesToSQLSet.js");
 const { ValidationError, RecordNotFoundError } = require("../error-types");
 const db = require("../db.js");
+const { SENDINBLUE_API_KEY, CLIENT_URL } = require("../env");
 
 const findAllAnim = async () => {
   return db.query(`SELECT * FROM user WHERE role = "animator"`);
@@ -216,9 +220,69 @@ const updateUser = async (id, newAttributes) => {
     .then(() => findOne(id));
 };
 
+const sendLinkToResetPassword = (datas) => {
+  const { email, token, userId, firstname, lastname } = datas;
+  const defaultClient = SibApiV3Sdk.ApiClient.instance;
+  const apiKey = defaultClient.authentications["api-key"];
+  apiKey.apiKey = SENDINBLUE_API_KEY;
+
+  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+  sendSmtpEmail.subject = "Mise à jour de votre mot de passe";
+  sendSmtpEmail.htmlContent = `<html><body><h1>Veuillez cliquer sur le lien ci-dessous pour réinitialiser votre mot de passe</h1>
+  <a href=${CLIENT_URL}reset/${userId}/${token}>Cliquez ici</a></body></html>`;
+  sendSmtpEmail.sender = {
+    name: firstname + lastname,
+    email: "hypnose.et.vin@gmail.com",
+  };
+  sendSmtpEmail.to = [{ email }];
+  sendSmtpEmail.replyTo = {
+    email: "hypnose.et.vin@gmail.com",
+    name: firstname + lastname,
+  };
+
+  try {
+    apiInstance.sendTransacEmail(sendSmtpEmail);
+    return;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// find one user by his id in forgot_password table
+const findOneInForgotPassword = async (id) => {
+  const userId = id;
+  const rows = await db.query("SELECT * FROM forgot_password WHERE userId=?", [
+    userId,
+  ]);
+  if (rows.length) {
+    return true;
+  }
+  return false;
+};
+
 const resetPassword = async (email) => {
   const user = await findByEmail(email);
-  return user
+  const { firstname, lastname } = user;
+  const userId = user.id;
+  const token = crypto.randomBytes(32).toString("hex");
+  const hashedToken = await argon2.hash(token);
+  const hasAlreadyReset = await findOneInForgotPassword(userId);
+  // const expire = moment.utc();
+  if (hasAlreadyReset) {
+    await db.query("DELETE FROM `forgot_password` WHERE userId = ?", [userId]);
+    await db.query(
+      "INSERT INTO `forgot_password` (userId, resetPasswordToken) VALUES (?, ?)",
+      [userId, hashedToken]
+    );
+  } else {
+    await db.query(
+      "INSERT INTO `forgot_password` (userId, resetPasswordToken) VALUES (?, ?)",
+      [userId, hashedToken]
+    );
+  }
+  await sendLinkToResetPassword({ email, token, userId, firstname, lastname });
 };
 
 module.exports = {
@@ -230,5 +294,5 @@ module.exports = {
   deleteUser,
   updateUser,
   findAllAnim,
-  resetPassword
+  resetPassword,
 };
