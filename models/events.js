@@ -120,16 +120,18 @@ const findOneEvent = async (id, failIfNotFound = true) => {
 const findAllEvents = async (req) => {
   let request =
     "SELECT e.*, w.name, w.vigneron, w.producteur, w.image, u.firstname, u.lastname, u.photo_url, u.role, a.street, a.city, a.zipcode FROM event AS e JOIN address AS a ON e.address_id = a.id JOIN user AS u ON e.moderator_id = u.id JOIN wine AS w ON e.wine_id = w.id";
-  if (req.query.after && req.query.before) {
-    request += ` WHERE date BETWEEN '${req.query.after}' AND '${req.query.before}'`;
-  }
-  if (req.query.sort) {
-    const parsedSort = JSON.parse(req.query.sort);
-    request += ` ORDER BY ${parsedSort[0]} ${parsedSort[1]}`;
-  }
-  if (req.query.range) {
-    const parsedRange = JSON.parse(req.query.range);
-    request += ` LIMIT ${parsedRange[1]} OFFSET ${parsedRange[0]}`;
+  if (req) {
+    if (req.query.after && req.query.before) {
+      request += ` WHERE date BETWEEN '${req.query.after}' AND '${req.query.before}'`;
+    }
+    if (req.query.sort) {
+      const parsedSort = JSON.parse(req.query.sort);
+      request += ` ORDER BY ${parsedSort[0]} ${parsedSort[1]}`;
+    }
+    if (req.query.range) {
+      const parsedRange = JSON.parse(req.query.range);
+      request += ` LIMIT ${parsedRange[1]} OFFSET ${parsedRange[0]}`;
+    }
   }
   return db.query(request);
 };

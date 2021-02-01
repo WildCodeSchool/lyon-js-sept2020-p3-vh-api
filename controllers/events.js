@@ -9,6 +9,8 @@ const {
 
 module.exports.handleAllEvents = async (req, res) => {
   const datas = await findAllEvents(req);
+  const allEventsLength = await findAllEvents();
+  res.set("X-Total-Count", allEventsLength.length);
   res.send(
     datas.map(
       ({
