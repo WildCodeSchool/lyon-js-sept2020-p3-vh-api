@@ -1,8 +1,12 @@
-const argon2 = require('argon2');
-const Joi = require('joi');
-const definedAttributesToSqlSet = require('../helpers/definedAttributesToSQLSet.js');
-const { ValidationError, RecordNotFoundError } = require('../error-types');
-const db = require('../db.js');
+const argon2 = require("argon2");
+const Joi = require("joi");
+const crypto = require("crypto");
+const moment = require("moment");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
+const definedAttributesToSqlSet = require("../helpers/definedAttributesToSQLSet.js");
+const { ValidationError, RecordNotFoundError } = require("../error-types");
+const db = require("../db.js");
+const { SENDINBLUE_API_KEY, CLIENT_URL } = require("../env");
 
 const findAllAnim = async () => {
   return db.query(`SELECT * FROM user WHERE role = "animator"`);
@@ -11,12 +15,12 @@ const findAllAnim = async () => {
 // find one user by his id
 const findOne = async (id, failIfNotFound = true) => {
   const userId = id;
-  const rows = await db.query('SELECT * FROM user WHERE id=?', [userId]);
+  const rows = await db.query("SELECT * FROM user WHERE id=?", [userId]);
   if (rows.length) {
     delete rows[0].encrypted_password;
     return rows[0];
   }
-  if (failIfNotFound) throw new RecordNotFoundError('users', userId);
+  if (failIfNotFound) throw new RecordNotFoundError("users", userId);
   return null;
 };
 
@@ -32,7 +36,7 @@ const verifyPassword = async (user, plainPassword) => {
 
 // verify if email already exists in the database
 const emailAlreadyExists = async (email) => {
-  const rows = await db.query('SELECT * FROM user WHERE email = ?', [email]);
+  const rows = await db.query("SELECT * FROM user WHERE email = ?", [email]);
   if (rows.length) {
     return true;
   }
@@ -50,10 +54,10 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
           .max(70)
           .regex(/^[a-z ,.'-]+$/i)
           .messages({
-            'string.min': 'Prénom manquant',
-            'string.max': 'Le prénom ne doit pas excéder 30 caractères',
-            'string.pattern.base':
-              'Votre prénom contient des caractères non autorisés',
+            "string.min": "Prénom manquant",
+            "string.max": "Le prénom ne doit pas excéder 30 caractères",
+            "string.pattern.base":
+              "Votre prénom contient des caractères non autorisés",
           })
       : Joi.string()
           .min(1)
@@ -61,10 +65,10 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
           .required()
           .regex(/^[a-z ,.'-]+$/i)
           .messages({
-            'string.min': 'Prénom manquant',
-            'string.max': 'Le prénom ne doit pas excéder 30 caractères',
-            'string.pattern.base':
-              'Votre prénom contient des caractères non autorisés',
+            "string.min": "Prénom manquant",
+            "string.max": "Le prénom ne doit pas excéder 30 caractères",
+            "string.pattern.base":
+              "Votre prénom contient des caractères non autorisés",
           }),
     lastname: forUpdate
       ? Joi.string()
@@ -72,10 +76,10 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
           .max(70)
           .regex(/^[a-z ,.'-]+$/i)
           .messages({
-            'string.min': 'Nom manquant',
-            'string.max': 'Le nom ne doit pas excéder 70 caractères',
-            'string.pattern.base':
-              'Votre nom contient des caractères non autorisés',
+            "string.min": "Nom manquant",
+            "string.max": "Le nom ne doit pas excéder 70 caractères",
+            "string.pattern.base":
+              "Votre nom contient des caractères non autorisés",
           })
       : Joi.string()
           .min(1)
@@ -83,50 +87,50 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
           .required()
           .regex(/^[a-z ,.'-]+$/i)
           .messages({
-            'string.min': 'Nom manquant',
-            'string.max': 'Le nom ne doit pas excéder 70 caractères',
-            'string.pattern.base':
-              'Votre nom contient des caractères non autorisés',
+            "string.min": "Nom manquant",
+            "string.max": "Le nom ne doit pas excéder 70 caractères",
+            "string.pattern.base":
+              "Votre nom contient des caractères non autorisés",
           }),
     email: forUpdate
       ? Joi.string().email()
       : Joi.string().email().required().messages({
-          required: 'Email manquant',
-          'string.email': "Votre email n'est pas valide",
+          required: "Email manquant",
+          "string.email": "Votre email n'est pas valide",
         }),
     password: forUpdate
       ? Joi.string().min(8).max(25).messages({
-          'string.min': 'Le mot de passe doit comprendre au moins 8 caractères',
-          'string.max':
-            'Le mot de passe doit comprendre moins de 25 caractères',
+          "string.min": "Le mot de passe doit comprendre au moins 8 caractères",
+          "string.max":
+            "Le mot de passe doit comprendre moins de 25 caractères",
         })
       : Joi.string().min(8).max(25).required().messages({
-          'string.min': 'Le mot de passe doit comprendre au moins 8 caractères',
-          'string.max':
-            'Le mot de passe doit comprendre moins de 25 caractères',
+          "string.min": "Le mot de passe doit comprendre au moins 8 caractères",
+          "string.max":
+            "Le mot de passe doit comprendre moins de 25 caractères",
         }),
     phone_number: forUpdate
-      ? Joi.string().max(30).allow('').messages({
-          'string.max':
-            'Le numéro de téléphone ne doit pas dépasser 30 caractères',
+      ? Joi.string().max(30).allow("").messages({
+          "string.max":
+            "Le numéro de téléphone ne doit pas dépasser 30 caractères",
         })
-      : Joi.string().max(30).allow('').messages({
-          'string.max':
-            'Le numéro de téléphone ne doit pas dépasser 30 caractères',
+      : Joi.string().max(30).allow("").messages({
+          "string.max":
+            "Le numéro de téléphone ne doit pas dépasser 30 caractères",
         }),
-    bio: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
-    role: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
-    photo_url: forUpdate ? Joi.allow('') : Joi.allow(''),
-    website_url: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
-    instagram_url: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
-    facebook_url: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
-    twitter_url: forUpdate ? Joi.string().allow('') : Joi.string().allow(''),
-    password_confirmation: Joi.when('password', {
+    bio: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
+    role: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
+    photo_url: forUpdate ? Joi.allow("") : Joi.allow(""),
+    website_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
+    instagram_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
+    facebook_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
+    twitter_url: forUpdate ? Joi.string().allow("") : Joi.string().allow(""),
+    password_confirmation: Joi.when("password", {
       is: Joi.string().min(8).max(30).required(),
       then: Joi.any()
-        .equal(Joi.ref('password'))
+        .equal(Joi.ref("password"))
         .required()
-        .messages({ 'any.only': 'Les mots de passe ne correspondent pas' }),
+        .messages({ "any.only": "Les mots de passe ne correspondent pas" }),
     }),
   });
 
@@ -137,8 +141,8 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
     throw new ValidationError([
       {
         message: error.details.map((err) => err.message),
-        path: ['joi'],
-        type: 'unique',
+        path: ["joi"],
+        type: "unique",
       },
     ]);
 
@@ -154,21 +158,50 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
     }
     if (shouldThrow) {
       throw new ValidationError([
-        { message: ['Cet email existe déjà'], path: ['email'], type: 'unique' },
+        { message: ["Cet email existe déjà"], path: ["email"], type: "unique" },
       ]);
     }
   }
+};
+
+const validatePasswords = async (attributes) => {
+  const schema = Joi.object().keys({
+    newPassword: Joi.string().min(8).max(25).required().messages({
+      "string.min": "Le mot de passe doit comprendre au moins 8 caractères",
+      "string.max": "Le mot de passe doit comprendre moins de 25 caractères",
+    }),
+    newPasswordConfirmation: Joi.when("password", {
+      is: Joi.string().min(8).max(30).required(),
+      then: Joi.any()
+        .equal(Joi.ref("password"))
+        .required()
+        .messages({ "any.only": "Les mots de passe ne correspondent pas" }),
+    }),
+  });
+
+  const { error } = schema.validate(attributes, {
+    abortEarly: false,
+  });
+  if (error)
+    throw new ValidationError([
+      {
+        message: error.details.map((err) => err.message),
+        path: ["joi"],
+        type: "unique",
+      },
+    ]);
 };
 
 /// / MODELS ////
 
 // find an user by his email
 const findByEmail = async (email, failIfNotFound = true) => {
-  const rows = await db.query('SELECT * FROM user WHERE email = ?', [email]);
+  const rows = await db.query("SELECT * FROM user WHERE email = ?", [email]);
   if (rows.length) {
     return rows[0];
   }
-  if (failIfNotFound) throw new RecordNotFoundError();
+  if (failIfNotFound)
+    throw new RecordNotFoundError("Cette adresse mail n'existe pas", email);
   return null;
 };
 
@@ -205,11 +238,11 @@ const createUser = async (datas) => {
 
 // delete one user by his Id
 const deleteUser = async (id, failIfNotFound = true) => {
-  const res = await db.query('DELETE FROM user WHERE id=?', [id]);
+  const res = await db.query("DELETE FROM user WHERE id=?", [id]);
   if (res.affectedRows !== 0) {
     return true;
   }
-  if (failIfNotFound) throw new RecordNotFoundError('users', id);
+  if (failIfNotFound) throw new RecordNotFoundError("users", id);
   return false;
 };
 // update one user by his id
@@ -228,6 +261,117 @@ const updateUser = async (id, newAttributes) => {
     .then(() => findOne(id));
 };
 
+const sendLinkToResetPassword = (datas) => {
+  const { email, token, userId, firstname } = datas;
+  const defaultClient = SibApiV3Sdk.ApiClient.instance;
+  const apiKey = defaultClient.authentications["api-key"];
+  apiKey.apiKey = SENDINBLUE_API_KEY;
+
+  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+  sendSmtpEmail.subject = "Hypnose & Vins - Mise à jour de votre mot de passe";
+  sendSmtpEmail.htmlContent = `<html><body><h2>Bonjour ${firstname}, veuillez cliquer sur le lien ci-dessous pour réinitialiser votre mot de passe</h2>
+  <a href=${CLIENT_URL}reset/${userId}/${token}>Cliquez ici</a><p>Attention, ce lien est valable 15 minutes.</p><p>A bientôt</p><p>Morgane Pardo, Hypnose & Vins</p></body></html>`;
+  sendSmtpEmail.sender = {
+    name: `Hypnose & Vins`,
+    email: "hypnose.et.vin@gmail.com",
+  };
+  sendSmtpEmail.to = [{ email }];
+  sendSmtpEmail.replyTo = {
+    email: "hypnose.et.vin@gmail.com",
+    name: `Hypnose & Vins`,
+  };
+
+  try {
+    apiInstance.sendTransacEmail(sendSmtpEmail);
+    return;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// find one user by his id in forgot_password table
+const findOneInForgotPassword = async (id) => {
+  const userId = id;
+  const rows = await db.query("SELECT * FROM forgot_password WHERE userId=?", [
+    userId,
+  ]);
+  if (rows.length) {
+    return rows[0];
+  }
+  return false;
+};
+
+const resetPassword = async (email) => {
+  const user = await findByEmail(email);
+  const { firstname, lastname } = user;
+  const userId = user.id;
+  const token = crypto.randomBytes(32).toString("hex");
+  const hashedToken = await argon2.hash(token);
+  const hasAlreadyReset = await findOneInForgotPassword(userId);
+  const expire = moment().add(900, "seconds").format();
+  if (hasAlreadyReset) {
+    await db.query("DELETE FROM `forgot_password` WHERE userId = ?", [userId]);
+    await db.query(
+      "INSERT INTO `forgot_password` (userId, reset_password_token, expire) VALUES (?, ?, ?)",
+      [userId, hashedToken, expire]
+    );
+  } else {
+    await db.query(
+      "INSERT INTO `forgot_password` (userId, reset_password_token, expire) VALUES (?, ?, ?)",
+      [userId, hashedToken, expire]
+    );
+  }
+  await sendLinkToResetPassword({ email, token, userId, firstname, lastname });
+};
+
+const storePassword = async (datas) => {
+  const { userId, newPassword, newPasswordConfirmation, token } = datas;
+  await validatePasswords({ newPassword, newPasswordConfirmation });
+  const isUserIdExist = await findOneInForgotPassword(userId);
+  if (!isUserIdExist) {
+    throw new RecordNotFoundError(
+      "Erreur, veuillez refaire une demande de mot de passe",
+      userId
+    );
+  } else {
+    const verifyTokens = await argon2.verify(
+      isUserIdExist.reset_password_token,
+      token
+    );
+    const linkHasAlreadyBeUsed = await db.query(
+      "SELECT * from forgot_password WHERE userId = ? AND is_password_modified = 0",
+      [userId]
+    );
+    const isTokenHasExpired = () => {
+      const { expire } = linkHasAlreadyBeUsed[0];
+      if (expire < moment().format()) {
+        throw new RecordNotFoundError(
+          "La validité du lien est dépassée, veuillez faire une autre demande",
+          userId
+        );
+      }
+      return false;
+    };
+    if (verifyTokens && linkHasAlreadyBeUsed.length && !isTokenHasExpired()) {
+      const newHashedPassword = await argon2.hash(newPassword);
+      await db.query(
+        "UPDATE forgot_password SET is_password_modified = 1 WHERE userId = ?",
+        [userId]
+      );
+      return db.query("UPDATE user SET encrypted_password = ? WHERE id = ?", [
+        newHashedPassword,
+        userId,
+      ]);
+    }
+    throw new RecordNotFoundError(
+      "Erreur, veuillez refaire une demande de mot de passe",
+      userId
+    );
+  }
+};
+
 module.exports = {
   createUser,
   verifyPassword,
@@ -237,4 +381,6 @@ module.exports = {
   deleteUser,
   updateUser,
   findAllAnim,
+  resetPassword,
+  storePassword,
 };
