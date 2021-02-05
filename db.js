@@ -29,7 +29,7 @@ class Database {
     // (see : https://github.com/sidorares/node-mysql2/blob/master/documentation/Extras.md) like it does for non-pooled ones.
     // So we're artificially keeping a second non-pooled connection just to format the query
     const sql = this.connection.format(...args);
-    // console.log(sql);
+    console.log(sql);
 
     // But we're actually sending the prepared query to the pool
     return this.pool

@@ -173,8 +173,21 @@ const findByEmail = async (email, failIfNotFound = true) => {
 };
 
 // find all users in database
-const findAll = async () => {
-  return db.query(`SELECT * FROM user`);
+const findAll = async (req) => {
+  let request =
+  "SELECT * from user";
+if (req) {
+  console.log(req.query);
+  if (req.query.sort) {
+    const parsedSort = JSON.parse(req.query.sort);
+    request += ` ORDER BY ${parsedSort[0]} ${parsedSort[1]}`;
+  }
+  if (req.query.range) {
+    const parsedRange = JSON.parse(req.query.range);
+    request += ` LIMIT ${parsedRange[0]} OFFSET ${parsedRange[1]}`;
+  }
+}
+return db.query(request);
 };
 
 // create an user
