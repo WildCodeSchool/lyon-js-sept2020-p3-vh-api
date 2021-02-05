@@ -103,11 +103,11 @@ const sendMail = async (id) => {
   </body></html>`;
   sendSmtpEmail.sender = {
     name: `Hypnose & Vins`,
-    email: 'morgane.pardo@yahoo.com',
+    email: 'hypnose.et.vin@gmail.com',
   };
   sendSmtpEmail.to = [{ email: customerEmail }];
   sendSmtpEmail.replyTo = {
-    email: 'morgane.pardo@yahoo.com',
+    email: 'hypnose.et.vin@gmail.com',
     name: `Hypnose & Vins`,
   };
 
@@ -177,11 +177,11 @@ const sendReminderMail = (datas) =>
 
     sendSmtpEmail.sender = {
       name: `Hypnose & Vins`,
-      email: 'morgane.pardo@yahoo.com',
+      email: 'hypnose.et.vin@gmail.com',
     };
     sendSmtpEmail.to = [{ email: customerEmail }];
     sendSmtpEmail.replyTo = {
-      email: 'morgane.pardo@yahoo.com',
+      email: 'hypnose.et.vin@gmail.com',
       name: `Hypnose & Vins`,
     };
 
