@@ -12,6 +12,8 @@ module.exports.handleOneCarrousel = async (req, res) => {
 
 module.exports.handleCarrouselGet = async (req, res) => {
   const rawData = await getPhoto(req);
+  const allCarouselLength = await getPhoto();
+  res.set("X-Total-Count", allCarouselLength.length);
   res.json(rawData);
 };
 

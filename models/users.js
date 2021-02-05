@@ -177,7 +177,6 @@ const findAll = async (req) => {
   let request =
   "SELECT * from user";
 if (req) {
-  console.log(req.query);
   if (req.query.sort) {
     const parsedSort = JSON.parse(req.query.sort);
     request += ` ORDER BY ${parsedSort[0]} ${parsedSort[1]}`;

@@ -8,7 +8,9 @@ const {
 } = require("../models/order");
 
 module.exports.handleAllOrders = async (req, res) => {
-  const rawData = await getAllOrders();
+  const rawData = await getAllOrders(req);
+  const allOrdersLength = await getAllOrders();
+  res.set("X-Total-Count", allOrdersLength.length);
   res.send(rawData);
 };
 
