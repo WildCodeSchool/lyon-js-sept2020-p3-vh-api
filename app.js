@@ -1,10 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
-const session = require('express-session');
-const sessionStore = require('./sessionStore')
-
+const express = require("express");
+const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
+const session = require("express-session");
+const sessionStore = require("./sessionStore");
 
 const {
   inTestEnv,
@@ -13,41 +12,41 @@ const {
   SESSION_COOKIE_SECRET,
   CORS_ALLOWED_ORIGINS,
   SESSION_COOKIE_NAME,
-} = require('./env');
-const handleServerInternalError = require('./middlewares/handleServerInternalError');
-const handleValidationError = require('./middlewares/handleValidationError');
-const handleRecordNotFoundError = require('./middlewares/handleRecordNotFoundError');
-const handleUnauthorizedError = require('./middlewares/handleUnauthorizedError');
+} = require("./env");
+const handleServerInternalError = require("./middlewares/handleServerInternalError");
+const handleValidationError = require("./middlewares/handleValidationError");
+const handleRecordNotFoundError = require("./middlewares/handleRecordNotFoundError");
+const handleUnauthorizedError = require("./middlewares/handleUnauthorizedError");
 
 const app = express();
-app.set('x-powered-by', false);
-app.set('trust proxy', 1);
+app.set("x-powered-by", false);
+app.set("trust proxy", 1);
 
 // docs
 if (!inTestEnv && !inProdEnv) {
-  const swaggerDocument = YAML.load('./docs/swagger.yaml');
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  const swaggerDocument = YAML.load("./docs/swagger.yaml");
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
-
 
 // middlewares
 
-const allowedOrigins = CORS_ALLOWED_ORIGINS.split(','); 
+const allowedOrigins = CORS_ALLOWED_ORIGINS.split(",");
 const corsOptions = {
   origin: (origin, callback) => {
     if (origin === undefined || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
+  exposedHeaders: ["X-Total-Count"],
   credentials: true,
 };
 
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use('/file-storage/public', express.static('file-storage/public'))
+app.use("/file-storage/public", express.static("file-storage/public"));
 app.use(
   session({
     key: SESSION_COOKIE_NAME,
@@ -60,7 +59,7 @@ app.use(
 );
 
 // routes
-require('./routes')(app);
+require("./routes")(app);
 
 // server setup
 const server = app.listen(SERVER_PORT, () => {
@@ -76,15 +75,15 @@ app.use(handleUnauthorizedError);
 app.use(handleServerInternalError);
 
 // process setup
-process.on('unhandledRejection', (error) => {
-  console.error('unhandledRejection', JSON.stringify(error), error.stack);
+process.on("unhandledRejection", (error) => {
+  console.error("unhandledRejection", JSON.stringify(error), error.stack);
   process.exit(1);
 });
-process.on('uncaughtException', (error) => {
-  console.error('uncaughtException', JSON.stringify(error), error.stack);
+process.on("uncaughtException", (error) => {
+  console.error("uncaughtException", JSON.stringify(error), error.stack);
   process.exit(1);
 });
-process.on('beforeExit', () => {
+process.on("beforeExit", () => {
   app.close((error) => {
     if (error) console.error(JSON.stringify(error), error.stack);
   });

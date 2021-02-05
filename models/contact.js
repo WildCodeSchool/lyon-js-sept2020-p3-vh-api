@@ -99,8 +99,19 @@ const newSubscriber = (email) => {
   }
 };
 
-const getAllMessages = async () => {
-  return db.query("SELECT * FROM messages");
+const getAllMessages = async (req) => {
+  let request = "SELECT * from messages";
+  if (req) {
+    if (req.query.sort) {
+      const parsedSort = JSON.parse(req.query.sort);
+      request += ` ORDER BY ${parsedSort[0]} ${parsedSort[1]}`;
+    }
+    if (req.query.range) {
+      const parsedRange = JSON.parse(req.query.range);
+      request += ` LIMIT ${parsedRange[0]} OFFSET ${parsedRange[1]}`;
+    }
+  }
+  return db.query(request);
 };
 
 const getOneMessage = async (id, failIfNotFound = true) => {

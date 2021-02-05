@@ -20,9 +20,20 @@ const findById = async (id, failIfNotFound = true) => {
   return null;
 };
 
-const findSponsor = async () => {
-  const rows = await db.query("SELECT * FROM sponsors");
-  if (rows.lenght === 0) {
+const findSponsor = async (req) => {
+  let request = "SELECT * FROM sponsors";
+  if (req) {
+    if (req.query.sort) {
+      const parsedSort = JSON.parse(req.query.sort);
+      request += ` ORDER BY ${parsedSort[0]} ${parsedSort[1]}`;
+    }
+    if (req.query.range) {
+      const parsedRange = JSON.parse(req.query.range);
+      request += ` LIMIT ${parsedRange[0]} OFFSET ${parsedRange[1]}`;
+    }
+  }
+  const rows = await db.query(request);
+  if (rows.length === 0) {
     return null;
   }
   return rows;

@@ -12,7 +12,9 @@ module.exports.handleOneSponsor = async (req, res) => {
 };
 
 module.exports.handleAllSponsor = async (req, res) => {
-  const data = await findSponsor();
+  const data = await findSponsor(req);
+  const allSponsorsLength = await findSponsor();
+  res.set("X-Total-Count", allSponsorsLength.length);
   return res.status(200).send(data);
 };
 

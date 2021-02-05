@@ -7,7 +7,9 @@ const {
 } = require("../models/wine");
 
 module.exports.handleWineGetAll = async (req, res) => {
-  const rawData = await getAllWine();
+  const rawData = await getAllWine(req);
+  const allWinesLength = await getAllWine();
+  res.set("X-Total-Count", allWinesLength.length);
   res.send(rawData);
 };
 
