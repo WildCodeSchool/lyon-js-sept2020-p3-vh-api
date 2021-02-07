@@ -30,11 +30,19 @@ const validate = async (attributes, options = { udpatedRessourceId: null }) => {
         }),
     price: forUpdate
       ? Joi.number().messages({
-          number: "Le prix contients des caractères invalides",
+          number: "Le prix contient des caractères invalides",
         })
       : Joi.number().required().messages({
           "any.required": "Le prix est manquant",
-          number: "Le prix contients des caractères invalides",
+          number: "Le prix contient des caractères invalides",
+        }),
+    availabilities: forUpdate
+      ? Joi.number().messages({
+          number: "La quantité disponible contient des caractères invalides",
+        })
+      : Joi.number().required().messages({
+          "any.required": "Le prix est manquant",
+          number: "La quantité disponible contient des caractères invalides",
         }),
     description: forUpdate
       ? Joi.string().messages({
