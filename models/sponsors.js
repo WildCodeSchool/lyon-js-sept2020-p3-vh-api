@@ -32,11 +32,7 @@ const findSponsor = async (req) => {
       request += ` LIMIT ${parsedRange[0]} OFFSET ${parsedRange[1]}`;
     }
   }
-  const rows = await db.query(request);
-  if (rows.length === 0) {
-    return null;
-  }
-  return rows;
+  return db.query(request);
 };
 
 const createSponsor = async (datas) => {
