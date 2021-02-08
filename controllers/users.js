@@ -25,7 +25,9 @@ module.exports.handleAllAnimators = async (req, res) => {
 };
 
 module.exports.handleAllUsers = async (req, res) => {
-  const datas = await findAll();
+  const datas = await findAll(req);
+  const allUsersLength = await findAll();
+  res.set("X-Total-Count", allUsersLength.length);
   res.send(
     datas.map(
       ({

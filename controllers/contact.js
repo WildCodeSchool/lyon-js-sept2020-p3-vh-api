@@ -7,7 +7,9 @@ const {
 } = require("../models/contact.js");
 
 module.exports.handleGetAllMessages = async (req, res) => {
-  const rawData = await getAllMessages();
+  const rawData = await getAllMessages(req);
+  const allMessagesLength = await getAllMessages();
+  res.set("X-Total-Count", allMessagesLength.length);
   res.send(rawData);
 };
 

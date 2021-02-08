@@ -4,10 +4,12 @@ const {
   getReviewPerUserPerEvent,
   postReview,
   deleteReview,
-} = require('../models/reviews');
+} = require("../models/reviews");
 
 module.exports.handleReviewGet = async (req, res) => {
-  const rawData = await getReview();
+  const rawData = await getReview(req);
+  const allReviewsLength = await getReview();
+  res.set("X-Total-Count", allReviewsLength.length);
   res.json(rawData);
 };
 

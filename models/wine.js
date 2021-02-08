@@ -2,8 +2,19 @@ const db = require("../db.js");
 const { RecordNotFoundError } = require("../error-types");
 const definedAttributesToSqlSet = require("../helpers/definedAttributesToSQLSet.js");
 
-const getAllWine = async () => {
-  return db.query("SELECT * FROM wine");
+const getAllWine = async (req) => {
+  let request = "SELECT * from wine";
+  if (req) {
+    if (req.query.sort) {
+      const parsedSort = JSON.parse(req.query.sort);
+      request += ` ORDER BY ${parsedSort[0]} ${parsedSort[1]}`;
+    }
+    if (req.query.range) {
+      const parsedRange = JSON.parse(req.query.range);
+      request += ` LIMIT ${parsedRange[0]} OFFSET ${parsedRange[1]}`;
+    }
+  }
+  return db.query(request);
 };
 
 const findById = async (id, failIfNotFound = true) => {

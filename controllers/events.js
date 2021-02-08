@@ -9,6 +9,8 @@ const {
 
 module.exports.handleAllEvents = async (req, res) => {
   const datas = await findAllEvents(req);
+  const allEventsLength = await findAllEvents();
+  res.set("X-Total-Count", allEventsLength.length);
   res.send(
     datas.map(
       ({
@@ -91,6 +93,7 @@ module.exports.handleAnEvent = async (req, res) => {
 module.exports.handleCreateEvent = async (req, res) => {
   const image = req.file ? req.file.path : null;
   const {
+    availabilities,
     date,
     title,
     price,
@@ -102,6 +105,7 @@ module.exports.handleCreateEvent = async (req, res) => {
   } = req.body;
   const createdUserId = await createEvent({
     date: moment(date).format("YYYY-MM-DD"),
+    availabilities,
     title,
     price,
     description,
