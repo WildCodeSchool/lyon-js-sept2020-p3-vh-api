@@ -9,11 +9,22 @@ const {
   handleWinePutOne,
   handleWineDeleteOne,
 } = require("../controllers/wine");
+const requireAdmin = require("../middlewares/requireAdmin.js");
 
 wineRoute.get("/", asyncHandler(handleWineGetAll));
 wineRoute.get("/:id", asyncHandler(handleWineGetOne));
-wineRoute.post("/", handleImageUpload, asyncHandler(handleWinePost));
-wineRoute.put("/:id", handleImageUpload, asyncHandler(handleWinePutOne));
-wineRoute.delete("/:id", asyncHandler(handleWineDeleteOne));
+wineRoute.post(
+  "/",
+  requireAdmin,
+  handleImageUpload,
+  asyncHandler(handleWinePost)
+);
+wineRoute.put(
+  "/:id",
+  requireAdmin,
+  handleImageUpload,
+  asyncHandler(handleWinePutOne)
+);
+wineRoute.delete("/:id", requireAdmin, asyncHandler(handleWineDeleteOne));
 
 module.exports = wineRoute;
