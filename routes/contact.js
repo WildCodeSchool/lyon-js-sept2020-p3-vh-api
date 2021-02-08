@@ -15,10 +15,9 @@ contactRouter.get("/:id", asyncHandler(handleGetOneMessage));
 contactRouter.post(
   "/newsletter",
   requireRequestBody,
-  requireAdmin,
   asyncHandler(handleSubscribeNewsLetter)
 );
-contactRouter.post("/", requireAdmin, asyncHandler(handleOneMessagePost));
+contactRouter.post("/", asyncHandler(handleOneMessagePost));
 contactRouter.delete(
   "/:id",
   requireAdmin,
